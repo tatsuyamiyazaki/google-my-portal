@@ -1281,6 +1281,40 @@
       font-size: 18px;
     }
 
+    .gmail-reply-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .gmail-action-btn {
+      background: white;
+      color: #667eea;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .gmail-action-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+    }
+
+    .gmail-action-btn.delete {
+      color: #e74c3c;
+    }
+
+    .gmail-action-btn.archive {
+      color: #f39c12;
+    }
+
     .email-message {
       padding: 24px;
       border-left: 4px solid #667eea;
@@ -3826,13 +3860,28 @@
           
           threadHTML += '<div class="gmail-reply-banner">';
           threadHTML += '<div class="gmail-reply-text">';
-          threadHTML += '<span class="material-icons">reply</span>';
-          threadHTML += '返信する場合はこちらから';
+          threadHTML += '<span class="material-icons">mail</span>';
+          threadHTML += 'メール操作';
           threadHTML += '</div>';
+          
+          threadHTML += '<div class="gmail-reply-actions">';
+          
+          threadHTML += '<button onclick="archiveEmailThread(\'' + threadId + '\')" class="gmail-action-btn archive">';
+          threadHTML += '<span class="material-icons">archive</span>';
+          threadHTML += 'アーカイブ';
+          threadHTML += '</button>';
+          
+          threadHTML += '<button onclick="deleteEmailThread(\'' + threadId + '\')" class="gmail-action-btn delete">';
+          threadHTML += '<span class="material-icons">delete</span>';
+          threadHTML += '削除';
+          threadHTML += '</button>';
+          
           threadHTML += '<a href="https://mail.google.com/mail/u/0/#inbox/' + threadId + '" target="_blank" class="gmail-reply-btn">';
           threadHTML += '<span class="material-icons">open_in_new</span>';
-          threadHTML += 'Gmailで開く';
+          threadHTML += 'Gmail';
           threadHTML += '</a>';
+          
+          threadHTML += '</div>';
           threadHTML += '</div>';
           
           threadHTML += '<div class="email-thread">';
@@ -3966,6 +4015,58 @@
           btn.innerHTML = originalHTML;
         })
         .downloadAttachment(threadId, messageIndex, attachmentIndex);
+    }
+
+    function deleteEmailThread(threadId) {
+      if(!confirm('このメールスレッドをゴミ箱に移動しますか？')) return;
+      
+      const modalBody = document.getElementById('emailModalBody');
+      if (modalBody) {
+        modalBody.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>削除中...</p></div>';
+      }
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+            if(result.success) {
+                document.getElementById('emailModal').style.display = 'none';
+                loadGmailData(); 
+                updateSummaryDashboard(); 
+            } else {
+                alert('削除に失敗しました: ' + result.error);
+                document.getElementById('emailModal').style.display = 'none';
+                loadGmailData();
+            }
+        })
+        .withFailureHandler(function(error) {
+            alert('削除に失敗しました');
+            document.getElementById('emailModal').style.display = 'none';
+        })
+        .deleteEmailThread(threadId);
+    }
+
+    function archiveEmailThread(threadId) {
+      const modalBody = document.getElementById('emailModalBody');
+      if (modalBody) {
+        modalBody.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>アーカイブ中...</p></div>';
+      }
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+            if(result.success) {
+                document.getElementById('emailModal').style.display = 'none';
+                loadGmailData(); 
+                updateSummaryDashboard(); 
+            } else {
+                alert('アーカイブに失敗しました: ' + result.error);
+                document.getElementById('emailModal').style.display = 'none';
+                loadGmailData();
+            }
+        })
+        .withFailureHandler(function(error) {
+            alert('アーカイブに失敗しました');
+            document.getElementById('emailModal').style.display = 'none';
+        })
+        .archiveEmailThread(threadId);
     }
 
     function loadTodoList() {

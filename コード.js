@@ -108,6 +108,40 @@ function markThreadAsRead(threadId) {
   }
 }
 
+function deleteEmailThread(threadId) {
+  try {
+    const thread = GmailApp.getThreadById(threadId);
+    thread.moveToTrash();
+    return {
+      success: true,
+      message: 'メールをゴミ箱に移動しました'
+    };
+  } catch (error) {
+    Logger.log('Error deleting thread: ' + error.toString());
+    return {
+      success: false,
+      error: error.toString()
+    };
+  }
+}
+
+function archiveEmailThread(threadId) {
+  try {
+    const thread = GmailApp.getThreadById(threadId);
+    thread.moveToArchive();
+    return {
+      success: true,
+      message: 'メールをアーカイブしました'
+    };
+  } catch (error) {
+    Logger.log('Error archiving thread: ' + error.toString());
+    return {
+      success: false,
+      error: error.toString()
+    };
+  }
+}
+
 function getEmailThread(threadId) {
   try {
     const thread = GmailApp.getThreadById(threadId);
