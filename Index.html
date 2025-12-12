@@ -18,20 +18,19 @@
       font-family: 'Noto Sans JP', sans-serif;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       min-height: 100vh;
-      padding: 15px;
-      padding-bottom: 60px;
+      padding: 8px;
+      overflow-y: auto;
     }
 
     .container {
-      max-width: 1600px;
-      margin: 0 auto;
+      width: 100%;
     }
 
     header {
       background: linear-gradient(135deg, rgba(15, 32, 39, 0.95) 0%, rgba(32, 58, 67, 0.95) 100%);
-      border-radius: 16px;
-      padding: 15px 25px;
-      margin-bottom: 15px;
+      border-radius: 12px;
+      padding: 10px 20px;
+      margin-bottom: 8px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(10px);
       display: flex;
@@ -50,15 +49,15 @@
 
     h1 {
       color: #e8eaf6;
-      font-size: 24px;
+      font-size: 18px;
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .logo {
-      font-size: 32px;
+      font-size: 24px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -135,7 +134,7 @@
     }
 
     .user-email {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 700;
       color: #e8eaf6;
     }
@@ -143,30 +142,182 @@
     .clock-section {
       text-align: right;
       border-left: 2px solid rgba(232, 234, 246, 0.2);
-      padding-left: 15px;
+      padding-left: 12px;
     }
 
     .clock {
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 700;
       color: #667eea;
       white-space: nowrap;
     }
 
     .date {
-      font-size: 11px;
+      font-size: 10px;
       color: #9fa8da;
       white-space: nowrap;
     }
 
+    .settings-btn {
+      background: rgba(102, 126, 234, 0.2);
+      border: 1px solid rgba(102, 126, 234, 0.3);
+      border-radius: 8px;
+      padding: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .settings-btn:hover {
+      background: rgba(102, 126, 234, 0.4);
+      transform: rotate(90deg);
+    }
+
+    .settings-btn .material-icons {
+      color: #667eea;
+      font-size: 20px;
+    }
+
+    .settings-modal-content {
+      max-width: 600px;
+      max-height: 80vh;
+    }
+
+    .settings-body {
+      padding: 20px;
+      overflow-y: auto;
+      max-height: calc(80vh - 60px);
+    }
+
+    .settings-section {
+      margin-bottom: 20px;
+    }
+
+    .settings-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .settings-section-header h4 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #e8eaf6;
+      font-size: 16px;
+    }
+
+    .settings-section-header h4 .material-icons {
+      font-size: 20px;
+      color: #667eea;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .btn-sm .material-icons {
+      font-size: 16px;
+    }
+
+    .fixed-links-settings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .fixed-link-setting-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: rgba(15, 32, 39, 0.6);
+      border-radius: 8px;
+      border: 1px solid rgba(232, 234, 246, 0.1);
+    }
+
+    .fixed-link-setting-item:hover {
+      background: rgba(15, 32, 39, 0.8);
+      border-color: rgba(102, 126, 234, 0.3);
+    }
+
+    .fixed-link-setting-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .fixed-link-setting-icon .material-icons {
+      font-size: 20px;
+      color: white;
+    }
+
+    .fixed-link-setting-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .fixed-link-setting-name {
+      font-weight: 600;
+      color: #e8eaf6;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .fixed-link-setting-url {
+      font-size: 11px;
+      color: #9fa8da;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fixed-link-setting-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .fixed-link-action-btn {
+      background: rgba(102, 126, 234, 0.2);
+      border: none;
+      border-radius: 6px;
+      padding: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .fixed-link-action-btn:hover {
+      background: rgba(102, 126, 234, 0.4);
+    }
+
+    .fixed-link-action-btn.delete:hover {
+      background: rgba(231, 76, 60, 0.4);
+    }
+
+    .fixed-link-action-btn .material-icons {
+      font-size: 18px;
+      color: #e8eaf6;
+    }
+
     .summary-dashboard {
       background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
-      border-radius: 16px;
-      padding: 15px 20px;
-      margin-bottom: 15px;
+      border-radius: 12px;
+      padding: 10px 15px;
+      margin-bottom: 8px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
       border: 1px solid rgba(102, 126, 234, 0.2);
       box-shadow: 0 4px 20px rgba(102, 126, 234, 0.1);
     }
@@ -174,10 +325,10 @@
     .summary-item {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px;
+      gap: 10px;
+      padding: 8px 10px;
       background: rgba(15, 32, 39, 0.6);
-      border-radius: 12px;
+      border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.08);
       transition: all 0.3s ease;
     }
@@ -193,13 +344,13 @@
     }
 
     .summary-icon {
-      width: 45px;
-      height: 45px;
-      border-radius: 12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 18px;
       flex-shrink: 0;
     }
 
@@ -224,21 +375,21 @@
     }
 
     .summary-label {
-      font-size: 11px;
+      font-size: 10px;
       color: #9fa8da;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
     .summary-value {
-      font-size: 18px;
+      font-size: 16px;
       color: #e8eaf6;
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
 
     .summary-subtext {
@@ -249,17 +400,38 @@
 
     .main-content {
       display: grid;
-      grid-template-columns: 450px 1fr 280px;
-      gap: 15px;
-      margin-bottom: 20px;
+      grid-template-columns: 380px 1fr 380px;
+      grid-template-rows: auto;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .main-content > .info-card {
+      min-height: 480px;
+    }
+
+    .bottom-section {
+      display: grid;
+      grid-template-columns: 380px 380px 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .bottom-section .info-card {
+      padding: 10px;
+      min-height: 200px;
+    }
+
+    .bottom-section .info-card h2 {
+      font-size: 13px;
+      margin-bottom: 8px;
     }
 
     .info-card {
       background: linear-gradient(135deg, rgba(15, 32, 39, 0.95) 0%, rgba(32, 58, 67, 0.95) 100%);
-      border-radius: 16px;
-      padding: 20px;
+      border-radius: 12px;
+      padding: 12px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      height: 600px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
@@ -268,27 +440,35 @@
 
     .info-card h2 {
       color: #e8eaf6;
-      font-size: 18px;
+      font-size: 14px;
       font-weight: 700;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       flex-shrink: 0;
+    }
+
+    .calendar-card {
+      height: 480px;
+      min-height: 480px;
+      max-height: 480px;
     }
 
     .calendar-widget {
       width: 100%;
       display: flex;
       flex-direction: column;
-      height: 100%;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
     }
 
     .calendar-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
       flex-shrink: 0;
     }
 
@@ -303,11 +483,11 @@
       border: none;
       color: #667eea;
       cursor: pointer;
-      font-size: 20px;
-      padding: 5px;
+      font-size: 16px;
+      padding: 4px;
       border-radius: 50%;
-      width: 30px;
-      height: 30px;
+      width: 26px;
+      height: 26px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -321,9 +501,9 @@
     .today-btn {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
       color: white !important;
-      border-radius: 8px !important;
-      padding: 5px 12px !important;
-      font-size: 12px !important;
+      border-radius: 6px !important;
+      padding: 4px 10px !important;
+      font-size: 10px !important;
       font-weight: 600;
       width: auto !important;
     }
@@ -353,33 +533,371 @@
       color: #e8eaf6;
     }
 
+    .calendar-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #e8eaf6;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .calendar-view-toggle {
+      display: flex;
+      gap: 3px;
+    }
+
+    .view-btn {
+      background: rgba(102, 126, 234, 0.2);
+      color: #9fa8da;
+      border: 1px solid rgba(102, 126, 234, 0.3);
+      border-radius: 5px;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .view-btn:hover {
+      background: rgba(102, 126, 234, 0.4);
+      color: #e8eaf6;
+    }
+
+    .view-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: transparent;
+    }
+
+    /* 週表示 - バーチカル24時間表示 */
+    .calendar-week-view {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .calendar-week-view::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .calendar-week-view::-webkit-scrollbar-track {
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 3px;
+    }
+
+    .calendar-week-view::-webkit-scrollbar-thumb {
+      background: rgba(102, 126, 234, 0.5);
+      border-radius: 3px;
+    }
+
+    .week-header-row {
+      display: flex;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(15, 32, 39, 0.95);
+    }
+
+    .week-time-header {
+      width: 35px;
+      flex-shrink: 0;
+    }
+
+    .week-day-header-cell {
+      flex: 1;
+      text-align: center;
+      padding: 4px 2px;
+      font-size: 9px;
+      color: #9fa8da;
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .week-day-header-cell.today {
+      background: rgba(102, 126, 234, 0.2);
+      color: #667eea;
+      font-weight: 700;
+    }
+
+    .week-day-header-num {
+      font-size: 12px;
+      font-weight: 700;
+      color: #e8eaf6;
+    }
+
+    .week-day-header-cell.today .week-day-header-num {
+      color: #667eea;
+    }
+
+    .week-body {
+      display: flex;
+      flex: 1;
+    }
+
+    .week-time-column {
+      width: 35px;
+      flex-shrink: 0;
+    }
+
+    .week-time-slot-label {
+      height: 30px;
+      font-size: 8px;
+      color: #9fa8da;
+      text-align: right;
+      padding-right: 4px;
+      line-height: 30px;
+    }
+
+    .week-days-container {
+      display: flex;
+      flex: 1;
+    }
+
+    .week-day-column {
+      flex: 1;
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+    }
+
+    .week-day-column.today {
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    .week-hour-cell {
+      height: 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      position: relative;
+    }
+
+    .week-event-item {
+      position: absolute;
+      left: 1px;
+      right: 1px;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.6) 100%);
+      border-radius: 2px;
+      padding: 1px 3px;
+      font-size: 8px;
+      color: #fff;
+      overflow: hidden;
+      cursor: pointer;
+      z-index: 5;
+      border-left: 2px solid #667eea;
+    }
+
+    .week-event-item:hover {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+    }
+
+    .week-event-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .week-allday-row {
+      display: flex;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      min-height: 20px;
+    }
+
+    .week-allday-label {
+      width: 35px;
+      font-size: 7px;
+      color: #9fa8da;
+      text-align: right;
+      padding-right: 4px;
+      line-height: 20px;
+    }
+
+    .week-allday-events {
+      flex: 1;
+      display: flex;
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .week-allday-cell {
+      flex: 1;
+      padding: 2px;
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .week-allday-event {
+      background: linear-gradient(135deg, rgba(67, 233, 123, 0.5) 0%, rgba(56, 249, 215, 0.5) 100%);
+      border-radius: 2px;
+      padding: 1px 3px;
+      font-size: 7px;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+
+    /* 日表示 - 24時間表示 */
+    .calendar-day-view {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .calendar-day-view::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .calendar-day-view::-webkit-scrollbar-track {
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 3px;
+    }
+
+    .calendar-day-view::-webkit-scrollbar-thumb {
+      background: rgba(102, 126, 234, 0.5);
+      border-radius: 3px;
+    }
+
+    .day-view-header {
+      text-align: center;
+      padding: 6px;
+      background: rgba(15, 32, 39, 0.4);
+      border-radius: 6px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .day-view-date {
+      font-size: 18px;
+      font-weight: 700;
+      color: #e8eaf6;
+    }
+
+    .day-view-weekday {
+      font-size: 11px;
+      color: #9fa8da;
+    }
+
+    .day-allday-section {
+      background: rgba(15, 32, 39, 0.3);
+      border-radius: 4px;
+      padding: 4px;
+      margin-bottom: 6px;
+    }
+
+    .day-allday-label {
+      font-size: 8px;
+      color: #9fa8da;
+      margin-bottom: 4px;
+    }
+
+    .day-allday-event {
+      background: linear-gradient(135deg, rgba(67, 233, 123, 0.5) 0%, rgba(56, 249, 215, 0.5) 100%);
+      border-radius: 3px;
+      padding: 3px 6px;
+      font-size: 9px;
+      color: #fff;
+      margin-bottom: 2px;
+      cursor: pointer;
+    }
+
+    .day-time-grid {
+      flex: 1;
+    }
+
+    .day-hour-row {
+      display: flex;
+      height: 35px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .day-hour-label {
+      width: 40px;
+      font-size: 9px;
+      color: #9fa8da;
+      text-align: right;
+      padding-right: 6px;
+      line-height: 35px;
+      flex-shrink: 0;
+    }
+
+    .day-hour-events {
+      flex: 1;
+      position: relative;
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .day-event-item {
+      position: absolute;
+      left: 2px;
+      right: 2px;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.6) 100%);
+      border-left: 3px solid #667eea;
+      border-radius: 3px;
+      padding: 3px 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 5;
+    }
+
+    .day-event-item:hover {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+    }
+
+    .day-event-time {
+      font-size: 8px;
+      color: #F093FB;
+      font-weight: 600;
+    }
+
+    .day-event-title {
+      font-size: 10px;
+      color: #e8eaf6;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .no-events-day {
+      text-align: center;
+      color: #9fa8da;
+      padding: 20px;
+      font-size: 11px;
+    }
+
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 2px;
+      gap: 1px;
       flex: 1;
       align-content: start;
     }
 
     .calendar-day-header {
       text-align: center;
-      font-size: 9px;
+      font-size: 8px;
       font-weight: 600;
       color: #9fa8da;
-      padding: 3px 0;
+      padding: 2px 0;
     }
 
     .calendar-day {
-      aspect-ratio: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
-      border-radius: 6px;
+      font-size: 10px;
+      border-radius: 4px;
       cursor: pointer;
       transition: all 0.3s ease;
       position: relative;
       color: #c5cae9;
+      padding: 4px 2px;
+      min-height: 60px; /* Added for month view to fit frame height */
+      max-height: 120px; /* Added for month view to fit frame height */
+      overflow-y: auto; /* Added for month view to fit frame height */
     }
 
     .calendar-day:hover {
@@ -430,14 +948,14 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
-      border-radius: 8px;
-      padding: 5px 10px;
-      font-size: 11px;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 10px;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 3px;
+      gap: 2px;
       transition: all 0.3s ease;
       box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
@@ -448,7 +966,7 @@
     }
 
     .add-todo-btn .material-icons {
-      font-size: 14px;
+      font-size: 12px;
     }
 
     #todoList {
@@ -620,11 +1138,11 @@
     }
 
     .email-item {
-      padding: 12px;
+      padding: 8px 10px;
       border-bottom: 1px solid rgba(232, 234, 246, 0.1);
       transition: background 0.3s ease;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 6px;
     }
 
     .email-item:hover {
@@ -649,29 +1167,29 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .email-from {
       font-weight: 700;
       color: #e8eaf6;
-      font-size: 13px;
+      font-size: 11px;
     }
 
     .email-date {
-      font-size: 11px;
+      font-size: 10px;
       color: #9fa8da;
     }
 
     .email-subject {
       color: #667eea;
-      font-size: 13px;
-      margin-bottom: 4px;
+      font-size: 11px;
+      margin-bottom: 3px;
       font-weight: 600;
     }
 
     .email-snippet {
-      font-size: 11px;
+      font-size: 10px;
       color: #9fa8da;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -681,17 +1199,17 @@
     .no-unread-message {
       text-align: center;
       color: #43e97b;
-      padding: 30px 20px;
-      font-size: 14px;
+      padding: 20px 15px;
+      font-size: 12px;
       font-weight: 600;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .no-unread-message .material-icons {
-      font-size: 48px;
+      font-size: 36px;
       color: #43e97b;
     }
 
@@ -995,17 +1513,17 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 8px;
       flex-shrink: 0;
     }
 
     .links-title {
-      font-size: 18px;
+      font-size: 13px;
       font-weight: 700;
       color: #e8eaf6;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .links-actions {
@@ -1017,9 +1535,9 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
-      border-radius: 6px;
-      padding: 6px 12px;
-      font-size: 11px;
+      border-radius: 5px;
+      padding: 4px 8px;
+      font-size: 10px;
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -1039,29 +1557,29 @@
     }
 
     .add-link-btn .material-icons, .add-folder-btn .material-icons {
-      font-size: 16px;
+      font-size: 12px;
     }
 
     .folder-container {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .folder-container.nested {
-      margin-left: 20px;
+      margin-left: 15px;
       border-left: 2px solid rgba(232, 234, 246, 0.1);
-      padding-left: 10px;
+      padding-left: 8px;
     }
 
     .folder-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 12px;
+      padding: 6px 10px;
       background: rgba(15, 32, 39, 0.6);
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.2s ease;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       border: 1px solid rgba(232, 234, 246, 0.1);
     }
 
@@ -1082,7 +1600,7 @@
     }
 
     .folder-icon {
-      font-size: 20px;
+      font-size: 16px;
       transition: transform 0.2s ease;
     }
 
@@ -1092,7 +1610,7 @@
 
     .folder-name {
       font-weight: 700;
-      font-size: 14px;
+      font-size: 11px;
       color: #e8eaf6;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -1100,9 +1618,9 @@
     }
 
     .folder-count {
-      font-size: 11px;
+      font-size: 10px;
       color: #9fa8da;
-      margin-left: 4px;
+      margin-left: 3px;
     }
 
     .folder-actions {
@@ -1115,8 +1633,8 @@
       background: none;
       border: none;
       cursor: pointer;
-      padding: 4px;
-      border-radius: 4px;
+      padding: 3px;
+      border-radius: 3px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1136,14 +1654,14 @@
     }
 
     .folder-action-btn .material-icons {
-      font-size: 16px;
+      font-size: 13px;
     }
 
     .folder-links {
-      padding-left: 20px;
+      padding-left: 12px;
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px;
+      grid-template-columns: 1fr;
+      gap: 4px;
       border-left: 2px solid rgba(232, 234, 246, 0.1);
       margin-left: 10px;
       padding-top: 6px;
@@ -1156,10 +1674,10 @@
 
     .custom-links-list {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px;
-      margin-top: 15px;
-      padding-top: 15px;
+      grid-template-columns: 1fr;
+      gap: 5px;
+      margin-top: 10px;
+      padding-top: 10px;
       border-top: 2px solid rgba(232, 234, 246, 0.1);
     }
 
@@ -1167,11 +1685,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 12px;
+      padding: 6px 10px;
       background: rgba(15, 32, 39, 0.6);
-      border-radius: 8px;
+      border-radius: 6px;
       transition: all 0.3s ease;
-      gap: 8px;
+      gap: 6px;
       border: 1px solid rgba(232, 234, 246, 0.1);
     }
 
@@ -1190,11 +1708,11 @@
     .custom-link-content a {
       text-decoration: none;
       color: #667eea;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -1207,15 +1725,15 @@
     }
 
     .link-favicon {
-      width: 18px;
-      height: 18px;
+      width: 14px;
+      height: 14px;
       flex-shrink: 0;
-      border-radius: 3px;
+      border-radius: 2px;
       object-fit: contain;
     }
 
     .custom-link-content .material-icons {
-      font-size: 18px;
+      font-size: 14px;
       flex-shrink: 0;
     }
 
@@ -1514,6 +2032,333 @@
       box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
 
+    /* 固定リンク集スタイル */
+    .fixed-links-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .fixed-links-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .fixed-links-list::-webkit-scrollbar-track {
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 3px;
+    }
+
+    .fixed-links-list::-webkit-scrollbar-thumb {
+      background: rgba(102, 126, 234, 0.5);
+      border-radius: 3px;
+    }
+
+    .fixed-link-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      background: rgba(15, 32, 39, 0.6);
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .fixed-link-item:hover {
+      background: rgba(102, 126, 234, 0.2);
+      transform: translateX(3px);
+    }
+
+    .fixed-link-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+      color: white;
+    }
+
+    .fixed-link-name {
+      color: #e8eaf6;
+      font-size: 11px;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* メモセクションスタイル */
+    .memo-section {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .memo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+
+    .add-memo-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .add-memo-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .add-memo-btn .material-icons {
+      font-size: 14px;
+    }
+
+    #memoList {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #memoList::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #memoList::-webkit-scrollbar-track {
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 3px;
+    }
+
+    #memoList::-webkit-scrollbar-thumb {
+      background: rgba(102, 126, 234, 0.5);
+      border-radius: 3px;
+    }
+
+    .memo-item {
+      padding: 8px 10px;
+      background: rgba(15, 32, 39, 0.6);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s ease;
+    }
+
+    .memo-item:hover {
+      background: rgba(102, 126, 234, 0.15);
+    }
+
+    .memo-content {
+      color: #e8eaf6;
+      font-size: 11px;
+      line-height: 1.4;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .memo-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .memo-tag {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .memo-actions {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+      justify-content: flex-end;
+    }
+
+    .memo-action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease;
+    }
+
+    .memo-action-btn:hover {
+      background: rgba(102, 126, 234, 0.2);
+    }
+
+    .memo-action-btn.edit {
+      color: #667eea;
+    }
+
+    .memo-action-btn.delete {
+      color: #F5576C;
+    }
+
+    .memo-action-btn .material-icons {
+      font-size: 16px;
+    }
+
+    .no-memo-message {
+      text-align: center;
+      color: #9fa8da;
+      padding: 20px;
+      font-size: 12px;
+    }
+
+    .memo-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .memo-view-btn {
+      background: rgba(102, 126, 234, 0.2);
+      border: none;
+      border-radius: 6px;
+      padding: 4px 6px;
+      cursor: pointer;
+      color: #9fa8da;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .memo-view-btn:hover {
+      background: rgba(102, 126, 234, 0.3);
+      color: #e8eaf6;
+    }
+
+    .memo-view-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .memo-view-btn .material-icons {
+      font-size: 16px;
+    }
+
+    .memo-tag-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+
+    .memo-tag-filter:empty {
+      display: none;
+    }
+
+    .memo-filter-tag {
+      background: rgba(102, 126, 234, 0.2);
+      color: #c5cae9;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .memo-filter-tag:hover {
+      background: rgba(102, 126, 234, 0.3);
+    }
+
+    .memo-filter-tag.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .memo-filter-tag.all-tag {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .memo-filter-tag.all-tag.active {
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    /* カード表示 */
+    #memoList.memo-card-view {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    #memoList.memo-card-view .memo-item {
+      display: flex;
+      flex-direction: column;
+      min-height: 120px;
+    }
+
+    #memoList.memo-card-view .memo-content {
+      flex: 1;
+      max-height: 80px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+    }
+
+    #memoList.memo-card-view .memo-actions {
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* 一覧表示 */
+    #memoList.memo-list-view {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #memoList.memo-list-view .memo-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .memo-tag.clickable {
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .memo-tag.clickable:hover {
+      transform: scale(1.05);
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+
     .modal {
       display: none;
       position: fixed;
@@ -1728,6 +2573,27 @@
       background: rgba(254, 225, 64, 0.25);
     }
 
+    .event-item.clickable {
+      position: relative;
+    }
+
+    .event-item.clickable::after {
+      content: 'chevron_right';
+      font-family: 'Material Icons';
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #667eea;
+      font-size: 24px;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+    }
+
+    .event-item.clickable:hover::after {
+      opacity: 1;
+    }
+
     .event-time {
       font-weight: 700;
       color: #667eea;
@@ -1746,6 +2612,220 @@
       font-size: 12px;
       color: #9fa8da;
       margin-top: 5px;
+    }
+
+    /* イベント詳細モーダル用スタイル */
+    .event-detail-container {
+      padding: 0;
+    }
+
+    .event-detail-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #e8eaf6;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid rgba(232, 234, 246, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .event-detail-title .material-icons {
+      font-size: 1.5rem;
+      color: #667eea;
+    }
+
+    .event-detail-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(232, 234, 246, 0.05);
+    }
+
+    .event-detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .event-detail-row .material-icons {
+      font-size: 20px;
+      color: #667eea;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .event-detail-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .event-detail-label {
+      font-size: 11px;
+      color: #9fa8da;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .event-detail-value {
+      font-size: 14px;
+      color: #e8eaf6;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .event-detail-value a {
+      color: #667eea;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .event-detail-value a:hover {
+      color: #9fa8da;
+      text-decoration: underline;
+    }
+
+    .event-detail-description {
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+      white-space: pre-wrap;
+    }
+
+    .event-detail-calendar {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(102, 126, 234, 0.15);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #9fa8da;
+    }
+
+    .event-detail-calendar .material-icons {
+      font-size: 14px;
+      color: #667eea;
+    }
+
+    .conference-join-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 24px;
+      border-radius: 10px;
+      text-decoration: none !important;
+      font-weight: 700;
+      font-size: 15px;
+      color: #ffffff !important;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      margin-top: 8px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      letter-spacing: 0.5px;
+    }
+
+    .conference-join-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      color: #ffffff !important;
+      text-decoration: none !important;
+    }
+
+    .conference-join-btn:visited {
+      color: #ffffff !important;
+    }
+
+    .conference-join-btn span {
+      color: #ffffff !important;
+    }
+
+    .conference-join-btn .material-icons {
+      font-size: 24px;
+      color: #ffffff !important;
+    }
+
+    .conference-join-btn.meet {
+      background: linear-gradient(135deg, #00796b 0%, #26a69a 100%);
+    }
+
+    .conference-join-btn.teams {
+      background: linear-gradient(135deg, #505ac9 0%, #7b83eb 100%);
+    }
+
+    .conference-join-btn.zoom {
+      background: linear-gradient(135deg, #0b5cff 0%, #4a8cff 100%);
+    }
+
+    .conference-join-btn.other {
+      background: linear-gradient(135deg, #5a67d8 0%, #805ad5 100%);
+    }
+
+    .recurrence-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(240, 147, 251, 0.15);
+      color: #F093FB;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .recurrence-badge .material-icons {
+      font-size: 16px;
+    }
+
+    .event-detail-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(232, 234, 246, 0.1);
+    }
+
+    .event-detail-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s ease;
+      flex: 1;
+    }
+
+    .event-detail-btn .material-icons {
+      font-size: 20px;
+    }
+
+    .event-detail-btn.edit {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .event-detail-btn.edit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .event-detail-btn.delete {
+      background: rgba(231, 76, 60, 0.15);
+      color: #E74C3C;
+      border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+
+    .event-detail-btn.delete:hover {
+      background: rgba(231, 76, 60, 0.25);
     }
 
     .no-events {
@@ -1804,56 +2884,80 @@
       100% { transform: rotate(360deg); }
     }
 
-    footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      text-align: center;
-      color: rgba(232, 234, 246, 0.8);
-      padding: 15px;
-      font-size: 13px;
-      background: linear-gradient(135deg, rgba(15, 32, 39, 0.95) 0%, rgba(32, 58, 67, 0.95) 100%);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
-      z-index: 100;
-    }
-
     @media (max-width: 1400px) {
       .main-content {
-        grid-template-columns: 1fr 1fr 280px;
+        grid-template-columns: 320px 1fr 320px;
+      }
+      .main-content > .info-card {
+        min-height: 420px;
+      }
+      .calendar-card {
+        height: 456px;
+        min-height: 456px;
+        max-height: 456px;
+      }
+      .bottom-section {
+        grid-template-columns: 320px 320px 1fr;
       }
     }
 
     @media (max-width: 1200px) {
       .main-content {
+        grid-template-columns: 1fr 1fr;
+      }
+      .main-content > .info-card {
+        min-height: 360px;
+      }
+      .calendar-card {
+        height: 420px;
+        min-height: 420px;
+        max-height: 420px;
+      }
+      .bottom-section {
+        grid-template-columns: 1fr 1fr;
+      }
+      .bottom-section > .info-card {
+        min-height: 180px;
+      }
+      .bottom-section > .info-card:nth-child(3) {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .main-content {
         grid-template-columns: 1fr;
       }
-
-      .summary-dashboard {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      .main-content > .info-card {
+        min-height: 360px;
       }
-
+      .calendar-card {
+        height: 420px;
+        min-height: 420px;
+        max-height: 420px;
+      }
+      .bottom-section {
+        grid-template-columns: 1fr;
+      }
+      .summary-dashboard {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      }
       .folder-links, .custom-links-list {
         grid-template-columns: 1fr;
       }
-
       header {
         flex-direction: column;
         align-items: stretch;
       }
-
       .header-right {
         justify-content: space-between;
       }
-
       .clock-section {
         border-left: none;
         border-top: 2px solid rgba(232, 234, 246, 0.2);
         padding-left: 0;
         padding-top: 10px;
       }
-
       .form-row {
         grid-template-columns: 1fr;
       }
@@ -1866,44 +2970,8 @@
       <div class="header-left">
         <h1>
           <span class="logo">◈</span>
-          Tatsuya's Portal
+          マイダッシュボード
         </h1>
-        <div class="nav-buttons">
-          <a href="https://gemini.google.com" target="_blank" class="nav-btn gemini">
-            <span class="material-icons">psychology</span>
-            Gemini
-          </a>
-          <a href="https://www.genspark.ai" target="_blank" class="nav-btn genspark">
-            <span class="material-icons">psychology</span>
-            Genspark
-          </a>
-          <a href="https://notebooklm.google.com" target="_blank" class="nav-btn notebookLM">
-            <span class="material-icons">psychology</span>
-            NotebookLM
-          </a>
-          <a href="https://mail.google.com" target="_blank" class="nav-btn gmail" id="gmailBtn">
-            <span class="badge" id="unreadBadge" style="display: none;">0</span>
-            <span class="material-icons">email</span>
-            Gmail
-          </a>
-          <a href="https://chat.google.com" target="_blank" class="nav-btn chat" id="chatBtn">
-            <span class="badge" id="chatBadge" style="display: none;">0</span>
-            <span class="material-icons">chat</span>
-            Chat
-          </a>
-          <a href="https://calendar.google.com" target="_blank" class="nav-btn calendar">
-            <span class="material-icons">event</span>
-            Calendar
-          </a>
-          <a href="https://drive.google.com" target="_blank" class="nav-btn drive">
-            <span class="material-icons">cloud</span>
-            Drive
-          </a>
-          <a href="https://sunbit.my.salesforce.com" target="_blank" class="nav-btn salesforce">
-            <span class="material-icons">cloud</span>
-            Salesforce
-          </a>
-        </div>
       </div>
       <div class="header-right">
         <div class="user-info">
@@ -1913,6 +2981,9 @@
           <div class="clock" id="clock">--:--:--</div>
           <div class="date" id="date">----年--月--日</div>
         </div>
+        <button class="settings-btn" onclick="openSettingsModal()" title="設定">
+          <span class="material-icons">settings</span>
+        </button>
       </div>
     </header>
 
@@ -1951,8 +3022,56 @@
 
     <div class="main-content">
       <div class="info-card">
-        <h2><span class="material-icons">inbox</span>最新メール</h2>
+        <h2><span class="material-icons">inbox</span>未読メール</h2>
         <div id="emailList">
+          <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
+        </div>
+      </div>
+
+      <div class="info-card calendar-card">
+        <h2><span class="material-icons">event_note</span>カレンダー</h2>
+        <div class="calendar-widget">
+          <div class="calendar-header">
+            <div class="calendar-nav">
+              <button onclick="navigateCalendar(-1)"><span class="material-icons">chevron_left</span></button>
+              <button class="today-btn" onclick="goToToday()">今日</button>
+              <button onclick="navigateCalendar(1)"><span class="material-icons">chevron_right</span></button>
+              <button class="add-event-quick-btn" onclick="openEventModal()" title="予定を追加">
+                <span class="material-icons">add</span>
+              </button>
+            </div>
+            <div class="calendar-view-toggle">
+              <button class="view-btn active" id="viewMonthBtn" onclick="setCalendarView('month')">月</button>
+              <button class="view-btn" id="viewWeekBtn" onclick="setCalendarView('week')">週</button>
+              <button class="view-btn" id="viewDayBtn" onclick="setCalendarView('day')">日</button>
+            </div>
+          </div>
+          <div class="calendar-title" id="calendarMonth"></div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+          <div class="calendar-week-view" id="calendarWeekView" style="display: none;"></div>
+          <div class="calendar-day-view" id="calendarDayView" style="display: none;"></div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="todo-section">
+          <div class="todo-header">
+            <h2 style="margin-bottom: 0;"><span class="material-icons">check_circle</span>未完了タスク</h2>
+            <button class="add-todo-btn" onclick="openTodoModal()">
+              <span class="material-icons">add</span>追加
+            </button>
+          </div>
+          <div id="todoList">
+            <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-section">
+      <div class="info-card">
+        <h2><span class="material-icons">push_pin</span>固定リンク集</h2>
+        <div id="fixedLinksList" class="fixed-links-list">
           <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
         </div>
       </div>
@@ -1960,7 +3079,7 @@
       <div class="info-card">
         <div class="links-section">
           <div class="links-header">
-            <div class="links-title"><span class="material-icons">bookmark</span>マイリンク</div>
+            <div class="links-title"><span class="material-icons">bookmark</span>カスタムリンク集</div>
             <div class="links-actions">
               <button class="add-folder-btn" onclick="openReorderModal()" style="background: linear-gradient(135deg, #F093FB 0%, #F5576C 100%);">
                 <span class="material-icons">swap_vert</span>並替
@@ -1979,44 +3098,29 @@
         </div>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 15px;">
-        <div class="info-card" style="height: 340px;">
-          <h2><span class="material-icons">event_note</span>カレンダー</h2>
-          <div class="calendar-widget">
-            <div class="calendar-header">
-              <div class="calendar-nav">
-                <button onclick="changeMonth(-1)"><span class="material-icons">chevron_left</span></button>
-                <button class="today-btn" onclick="goToToday()">今日</button>
-                <button onclick="changeMonth(1)"><span class="material-icons">chevron_right</span></button>
-                <button class="add-event-quick-btn" onclick="openEventModal()" title="予定を追加">
-                  <span class="material-icons">add</span>
-                </button>
-              </div>
-              <div class="calendar-month" id="calendarMonth"></div>
-            </div>
-            <div class="calendar-grid" id="calendarGrid"></div>
-          </div>
-        </div>
-
-        <div class="info-card" style="height: 245px;">
-          <div class="todo-section">
-            <div class="todo-header">
-              <h2 style="margin-bottom: 0;"><span class="material-icons">check_circle</span>Todoリスト</h2>
-              <button class="add-todo-btn" onclick="openTodoModal()">
+      <div class="info-card">
+        <div class="memo-section">
+          <div class="memo-header">
+            <h2 style="margin-bottom: 0;"><span class="material-icons">note</span>メモ</h2>
+            <div class="memo-controls">
+              <button class="memo-view-btn active" id="memoListViewBtn" onclick="setMemoView('list')" title="一覧表示">
+                <span class="material-icons">view_list</span>
+              </button>
+              <button class="memo-view-btn" id="memoCardViewBtn" onclick="setMemoView('card')" title="カード表示">
+                <span class="material-icons">grid_view</span>
+              </button>
+              <button class="add-memo-btn" onclick="openMemoModal()">
                 <span class="material-icons">add</span>追加
               </button>
             </div>
-            <div id="todoList">
-              <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
-            </div>
+          </div>
+          <div class="memo-tag-filter" id="memoTagFilter"></div>
+          <div id="memoList" class="memo-list-view">
+            <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
           </div>
         </div>
       </div>
     </div>
-
-    <footer>
-      <p>&copy; 2025 NexusHub - 統合ワークスペースポータル | Powered by Kimura_Family</p>
-    </footer>
   </div>
 
   <!-- イベントモーダル -->
@@ -2073,6 +3177,34 @@
         <div class="form-group">
           <label for="eventLocationInput">場所</label>
           <input type="text" id="eventLocationInput" class="form-input" placeholder="場所" />
+        </div>
+        <div class="form-group">
+          <label for="eventRecurrenceSelect">繰り返し</label>
+          <select id="eventRecurrenceSelect" class="form-select" onchange="toggleRecurrenceOptions()">
+            <option value="">なし</option>
+            <option value="DAILY">毎日</option>
+            <option value="WEEKLY">毎週</option>
+            <option value="MONTHLY">毎月</option>
+            <option value="YEARLY">毎年</option>
+          </select>
+        </div>
+        <div id="recurrenceOptionsRow" class="form-row" style="display: none;">
+          <div class="form-group">
+            <label for="eventRecurrenceEndType">終了条件</label>
+            <select id="eventRecurrenceEndType" class="form-select" onchange="toggleRecurrenceEndInput()">
+              <option value="never">なし（無期限）</option>
+              <option value="until">指定日まで</option>
+              <option value="count">回数指定</option>
+            </select>
+          </div>
+          <div class="form-group" id="recurrenceUntilGroup" style="display: none;">
+            <label for="eventRecurrenceUntil">終了日</label>
+            <input type="date" id="eventRecurrenceUntil" class="form-input" />
+          </div>
+          <div class="form-group" id="recurrenceCountGroup" style="display: none;">
+            <label for="eventRecurrenceCount">回数</label>
+            <input type="number" id="eventRecurrenceCount" class="form-input" min="1" max="365" value="10" />
+          </div>
         </div>
         <div class="form-group">
           <label for="eventDescriptionInput">説明</label>
@@ -2246,7 +3378,142 @@
     </div>
   </div>
 
+  <!-- メモモーダル -->
+  <div id="memoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="memoModalTitle">メモを追加</h3>
+        <button class="close-btn" onclick="closeModal('memoModal')">&times;</button>
+      </div>
+      <div>
+        <div class="form-group">
+          <label for="memoContentInput">メモ内容 *</label>
+          <textarea id="memoContentInput" class="form-textarea" placeholder="メモを入力..." rows="6"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="memoTagsInput">タグ（カンマ区切り）</label>
+          <input type="text" id="memoTagsInput" class="form-input" placeholder="例: 仕事, 重要, アイデア" />
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="closeModal('memoModal')">キャンセル</button>
+          <button class="btn btn-danger" id="deleteMemoBtn" onclick="deleteMemoFromModal()" style="display: none;">
+            <span class="material-icons" style="font-size: 18px;">delete</span>
+            削除
+          </button>
+          <button class="btn btn-primary" onclick="saveMemo()">
+            <span class="material-icons" style="font-size: 18px;">save</span>
+            保存
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 設定モーダル -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content settings-modal-content">
+      <div class="modal-header">
+        <h3><span class="material-icons">settings</span>設定</h3>
+        <button class="close-btn" onclick="closeModal('settingsModal')">&times;</button>
+      </div>
+      <div class="settings-body">
+        <div class="settings-section">
+          <div class="settings-section-header">
+            <h4><span class="material-icons">push_pin</span>固定リンク集</h4>
+            <button class="btn btn-sm btn-primary" onclick="addFixedLink()">
+              <span class="material-icons">add</span>追加
+            </button>
+          </div>
+          <div id="fixedLinksSettingsList" class="fixed-links-settings-list">
+            <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 固定リンク編集モーダル -->
+  <div id="fixedLinkEditModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="fixedLinkEditTitle">固定リンクを追加</h3>
+        <button class="close-btn" onclick="closeModal('fixedLinkEditModal')">&times;</button>
+      </div>
+      <div>
+        <div class="form-group">
+          <label for="fixedLinkNameInput">名前 *</label>
+          <input type="text" id="fixedLinkNameInput" class="form-input" placeholder="例: Gmail" />
+        </div>
+        <div class="form-group">
+          <label for="fixedLinkUrlInput">URL *</label>
+          <input type="url" id="fixedLinkUrlInput" class="form-input" placeholder="https://mail.google.com" />
+        </div>
+        <div class="form-group">
+          <label for="fixedLinkIconInput">アイコン</label>
+          <select id="fixedLinkIconInput" class="form-select">
+            <option value="link">リンク</option>
+            <option value="mail">メール</option>
+            <option value="calendar_today">カレンダー</option>
+            <option value="folder">ドライブ</option>
+            <option value="description">ドキュメント</option>
+            <option value="table_chart">スプレッドシート</option>
+            <option value="slideshow">スライド</option>
+            <option value="language">Webサイト</option>
+            <option value="code">GASアプリ</option>
+            <option value="chat">チャット</option>
+            <option value="video_call">ビデオ</option>
+            <option value="storage">ストレージ</option>
+            <option value="task_alt">タスク</option>
+            <option value="note">メモ</option>
+            <option value="work">仕事</option>
+            <option value="home">ホーム</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fixedLinkColorInput">カラー</label>
+          <select id="fixedLinkColorInput" class="form-select">
+            <option value="linear-gradient(135deg, #667eea 0%, #764ba2 100%)">パープル</option>
+            <option value="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)">ピンク</option>
+            <option value="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)">ブルー</option>
+            <option value="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)">グリーン</option>
+            <option value="linear-gradient(135deg, #fa709a 0%, #fee140 100%)">オレンジ</option>
+            <option value="linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)">パステル</option>
+            <option value="linear-gradient(135deg, #ff0844 0%, #ffb199 100%)">レッド</option>
+            <option value="linear-gradient(135deg, #96fbc4 0%, #f9f586 100%)">ライム</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="closeModal('fixedLinkEditModal')">キャンセル</button>
+          <button class="btn btn-primary" onclick="saveFixedLinkEdit()">
+            <span class="material-icons" style="font-size: 18px;">save</span>
+            保存
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Event Cache to avoid passing JSON in HTML attributes
+    window.eventCache = {};
+
+    function cacheEvent(event) {
+      // Create a unique key using ID and start time to handle recurring event instances
+      const key = (event.id || 'unknown') + '_' + (event.startTime || Date.now());
+      window.eventCache[key] = event;
+      return key;
+    }
+
+    function showEventDetailById(key) {
+      const event = window.eventCache[key];
+      if (event) {
+        showEventDetail(event);
+      } else {
+        console.error('Event not found in cache:', key);
+        alert('予定の詳細を表示できませんでした。');
+      }
+    }
+
     let currentYear = new Date().getFullYear();
     let currentMonth = new Date().getMonth() + 1;
     let eventDatesData = {};
@@ -2254,7 +3521,10 @@
     let editingTodoId = null;
     let editingTodoListId = null;
     let editingEventId = null;
+    let editingEventCalendarId = null;
     let currentEventDate = null;
+    let currentDetailEvent = null;
+    let dayEventsCache = {};
     let emailRefreshInterval = null;
     let calendarRefreshInterval = null;
     let summaryRefreshInterval = null;
@@ -2268,6 +3538,11 @@
     let todayEventsData = [];
     let nextEventData = null;
     let chatRefreshInterval = null;
+    let calendarView = 'month'; // 'month', 'week', 'day'
+    let currentWeekStart = null;
+    let currentDayDate = null;
+    let weekEventsData = {};
+    let dayEventsData = [];
 
     function updateClock() {
       const now = new Date();
@@ -2389,59 +3664,9 @@
 
     function showNextEventDetail() {
       if (!nextEventData) return;
-      
-      const modal = document.getElementById('eventModal');
-      const modalBody = document.getElementById('eventModalBody');
-      const addBtn = document.getElementById('addEventFromDateBtn');
-      
-      const startTime = new Date(nextEventData.startTime);
-      const endTime = new Date(nextEventData.endTime);
-      
-      const year = startTime.getFullYear();
-      const month = startTime.getMonth() + 1;
-      const day = startTime.getDate();
-      const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
-      const weekday = weekdays[startTime.getDay()];
-      
-      const titleElement = document.getElementById('eventModalTitle');
-      if (titleElement) {
-        titleElement.textContent = nextEventData.title;
-      }
-      
-      if (addBtn) {
-        addBtn.style.display = 'none';
-      }
-      
-      let timeStr = '';
-      if (nextEventData.isAllDay) {
-        timeStr = '終日';
-      } else {
-        timeStr = String(startTime.getHours()).padStart(2, '0') + ':' + 
-                 String(startTime.getMinutes()).padStart(2, '0') + ' - ' +
-                 String(endTime.getHours()).padStart(2, '0') + ':' + 
-                 String(endTime.getMinutes()).padStart(2, '0');
-      }
-      
-      let detailHTML = '<div class="event-item">';
-      detailHTML += '<div class="event-time">' + timeStr + '</div>';
-      detailHTML += '<div class="event-title">' + escapeHtml(nextEventData.title) + '</div>';
-      detailHTML += '<div class="event-details">📅 ' + year + '年' + month + '月' + day + '日 (' + weekday + ')</div>';
-      if (nextEventData.location) {
-        detailHTML += '<div class="event-details">📍 ' + escapeHtml(nextEventData.location) + '</div>';
-      }
-      if (nextEventData.description) {
-        detailHTML += '<div class="event-details" style="margin-top: 10px;">' + escapeHtml(nextEventData.description) + '</div>';
-      }
-      detailHTML += '<div class="event-details" style="margin-top: 10px; color: #7F8C8D;">📅 ' + escapeHtml(nextEventData.calendarName) + '</div>';
-      detailHTML += '</div>';
-      
-      if (modalBody) {
-        modalBody.innerHTML = detailHTML;
-      }
-      
-      if (modal) {
-        modal.style.display = 'block';
-      }
+
+      // showEventDetail関数を再利用
+      showEventDetail(nextEventData);
     }
 
     function loadGmailData() {
@@ -3464,6 +4689,421 @@
 
     loadUserLinks();
 
+    // 固定リンク読み込み
+    function loadFixedLinks() {
+      google.script.run
+        .withSuccessHandler(function(result) {
+          const linksList = document.getElementById('fixedLinksList');
+          if (!linksList) return;
+
+          if (!result.success) {
+            linksList.innerHTML = '<p class="no-memo-message">固定リンクの取得に失敗しました</p>';
+            return;
+          }
+
+          const links = result.links || [];
+
+          if (links.length === 0) {
+            linksList.innerHTML = '<p class="no-memo-message">固定リンクがありません</p>';
+            return;
+          }
+
+          let html = '';
+          links.forEach(function(link) {
+            html += '<a href="' + escapeHtml(link.url) + '" target="_blank" class="fixed-link-item">';
+            html += '<div class="fixed-link-icon" style="background: ' + (link.color || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)') + ';">';
+            html += '<span class="material-icons">' + (link.icon || 'link') + '</span>';
+            html += '</div>';
+            html += '<span class="fixed-link-name">' + escapeHtml(link.name) + '</span>';
+            html += '</a>';
+          });
+
+          linksList.innerHTML = html;
+        })
+        .withFailureHandler(function(error) {
+          const linksList = document.getElementById('fixedLinksList');
+          if (linksList) {
+            linksList.innerHTML = '<p class="no-memo-message">固定リンクの取得に失敗しました</p>';
+          }
+        })
+        .getFixedLinks();
+    }
+
+    loadFixedLinks();
+
+    // 設定画面関連
+    let allFixedLinks = [];
+    let editingFixedLinkIndex = null;
+
+    function openSettingsModal() {
+      document.getElementById('settingsModal').style.display = 'flex';
+      loadFixedLinksForSettings();
+    }
+
+    function loadFixedLinksForSettings() {
+      const list = document.getElementById('fixedLinksSettingsList');
+      list.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>';
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+          if (!result.success) {
+            list.innerHTML = '<p class="no-memo-message">取得に失敗しました</p>';
+            return;
+          }
+
+          allFixedLinks = result.links || [];
+          renderFixedLinksSettings();
+        })
+        .withFailureHandler(function(error) {
+          list.innerHTML = '<p class="no-memo-message">取得に失敗しました</p>';
+        })
+        .getFixedLinks();
+    }
+
+    function renderFixedLinksSettings() {
+      const list = document.getElementById('fixedLinksSettingsList');
+
+      if (allFixedLinks.length === 0) {
+        list.innerHTML = '<p class="no-memo-message">固定リンクがありません</p>';
+        return;
+      }
+
+      let html = '';
+      allFixedLinks.forEach(function(link, index) {
+        html += '<div class="fixed-link-setting-item">';
+        html += '<div class="fixed-link-setting-icon" style="background: ' + (link.color || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)') + ';">';
+        html += '<span class="material-icons">' + (link.icon || 'link') + '</span>';
+        html += '</div>';
+        html += '<div class="fixed-link-setting-info">';
+        html += '<div class="fixed-link-setting-name">' + escapeHtml(link.name) + '</div>';
+        html += '<div class="fixed-link-setting-url">' + escapeHtml(link.url) + '</div>';
+        html += '</div>';
+        html += '<div class="fixed-link-setting-actions">';
+        html += '<button class="fixed-link-action-btn" onclick="editFixedLink(' + index + ')" title="編集">';
+        html += '<span class="material-icons">edit</span>';
+        html += '</button>';
+        html += '<button class="fixed-link-action-btn delete" onclick="deleteFixedLink(' + index + ')" title="削除">';
+        html += '<span class="material-icons">delete</span>';
+        html += '</button>';
+        html += '</div>';
+        html += '</div>';
+      });
+
+      list.innerHTML = html;
+    }
+
+    function addFixedLink() {
+      editingFixedLinkIndex = null;
+      document.getElementById('fixedLinkEditTitle').textContent = '固定リンクを追加';
+      document.getElementById('fixedLinkNameInput').value = '';
+      document.getElementById('fixedLinkUrlInput').value = '';
+      document.getElementById('fixedLinkIconInput').value = 'link';
+      document.getElementById('fixedLinkColorInput').value = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+      document.getElementById('fixedLinkEditModal').style.display = 'flex';
+    }
+
+    function editFixedLink(index) {
+      editingFixedLinkIndex = index;
+      const link = allFixedLinks[index];
+      document.getElementById('fixedLinkEditTitle').textContent = '固定リンクを編集';
+      document.getElementById('fixedLinkNameInput').value = link.name || '';
+      document.getElementById('fixedLinkUrlInput').value = link.url || '';
+      document.getElementById('fixedLinkIconInput').value = link.icon || 'link';
+      document.getElementById('fixedLinkColorInput').value = link.color || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+      document.getElementById('fixedLinkEditModal').style.display = 'flex';
+    }
+
+    function saveFixedLinkEdit() {
+      const name = document.getElementById('fixedLinkNameInput').value.trim();
+      const url = document.getElementById('fixedLinkUrlInput').value.trim();
+      const icon = document.getElementById('fixedLinkIconInput').value;
+      const color = document.getElementById('fixedLinkColorInput').value;
+
+      if (!name || !url) {
+        alert('名前とURLは必須です');
+        return;
+      }
+
+      const linkData = { name, url, icon, color };
+
+      if (editingFixedLinkIndex !== null) {
+        allFixedLinks[editingFixedLinkIndex] = linkData;
+      } else {
+        allFixedLinks.push(linkData);
+      }
+
+      saveAllFixedLinks();
+      closeModal('fixedLinkEditModal');
+    }
+
+    function deleteFixedLink(index) {
+      if (!confirm('この固定リンクを削除しますか？')) return;
+      allFixedLinks.splice(index, 1);
+      saveAllFixedLinks();
+    }
+
+    function saveAllFixedLinks() {
+      const list = document.getElementById('fixedLinksSettingsList');
+      list.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>保存中...</p></div>';
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+          if (result.success) {
+            renderFixedLinksSettings();
+            loadFixedLinks();
+          } else {
+            alert('保存に失敗しました');
+            renderFixedLinksSettings();
+          }
+        })
+        .withFailureHandler(function(error) {
+          alert('保存に失敗しました');
+          renderFixedLinksSettings();
+        })
+        .saveFixedLinks(allFixedLinks);
+    }
+
+    // メモ関連
+    let editingMemoId = null;
+    let allMemos = [];
+    let currentMemoView = 'list';
+    let currentMemoTagFilter = null;
+
+    function loadMemos() {
+      google.script.run
+        .withSuccessHandler(function(result) {
+          if (!result.success) {
+            const memoList = document.getElementById('memoList');
+            if (memoList) memoList.innerHTML = '<p class="no-memo-message">メモの取得に失敗しました</p>';
+            return;
+          }
+
+          allMemos = result.memos || [];
+          updateTagFilter();
+          renderMemos();
+        })
+        .withFailureHandler(function(error) {
+          const memoList = document.getElementById('memoList');
+          if (memoList) memoList.innerHTML = '<p class="no-memo-message">メモの取得に失敗しました</p>';
+        })
+        .getMemos();
+    }
+
+    function updateTagFilter() {
+      const filterContainer = document.getElementById('memoTagFilter');
+      if (!filterContainer) return;
+
+      // 全タグを収集
+      const tagSet = new Set();
+      allMemos.forEach(function(memo) {
+        if (memo.tags && memo.tags.length > 0) {
+          memo.tags.forEach(function(tag) {
+            tagSet.add(tag);
+          });
+        }
+      });
+
+      if (tagSet.size === 0) {
+        filterContainer.innerHTML = '';
+        return;
+      }
+
+      let html = '<span class="memo-filter-tag all-tag' + (currentMemoTagFilter === null ? ' active' : '') + '" onclick="filterByTag(null)">すべて</span>';
+      tagSet.forEach(function(tag) {
+        const isActive = currentMemoTagFilter === tag ? ' active' : '';
+        html += '<span class="memo-filter-tag' + isActive + '" onclick="filterByTag(\'' + escapeHtml(tag).replace(/'/g, "\\'") + '\')">' + escapeHtml(tag) + '</span>';
+      });
+
+      filterContainer.innerHTML = html;
+    }
+
+    function filterByTag(tag) {
+      currentMemoTagFilter = tag;
+      updateTagFilter();
+      renderMemos();
+    }
+
+    function renderMemos() {
+      const memoList = document.getElementById('memoList');
+      if (!memoList) return;
+
+      // フィルタリング
+      let filteredMemos = allMemos;
+      if (currentMemoTagFilter !== null) {
+        filteredMemos = allMemos.filter(function(memo) {
+          return memo.tags && memo.tags.includes(currentMemoTagFilter);
+        });
+      }
+
+      if (filteredMemos.length === 0) {
+        memoList.innerHTML = '<p class="no-memo-message">' + (currentMemoTagFilter ? 'このタグのメモはありません' : 'メモがありません') + '</p>';
+        return;
+      }
+
+      let html = '';
+      filteredMemos.forEach(function(memo) {
+        const tagsJson = memo.tags ? JSON.stringify(memo.tags) : '[]';
+        html += '<div class="memo-item" data-memo-id="' + memo.id + '">';
+        html += '<div class="memo-content">' + escapeHtml(memo.content) + '</div>';
+        if (memo.tags && memo.tags.length > 0) {
+          html += '<div class="memo-tags">';
+          memo.tags.forEach(function(tag) {
+            html += '<span class="memo-tag clickable" onclick="filterByTag(\'' + escapeHtml(tag).replace(/'/g, "\\'") + '\')">' + escapeHtml(tag) + '</span>';
+          });
+          html += '</div>';
+        }
+        html += '<div class="memo-actions">';
+        html += '<button class="memo-action-btn edit" onclick="editMemo(\'' + memo.id + '\')" title="編集">';
+        html += '<span class="material-icons">edit</span>';
+        html += '</button>';
+        html += '<button class="memo-action-btn delete" onclick="deleteMemo(\'' + memo.id + '\')" title="削除">';
+        html += '<span class="material-icons">delete</span>';
+        html += '</button>';
+        html += '</div>';
+        html += '</div>';
+      });
+
+      memoList.innerHTML = html;
+    }
+
+    function setMemoView(view) {
+      currentMemoView = view;
+      const memoList = document.getElementById('memoList');
+      const listBtn = document.getElementById('memoListViewBtn');
+      const cardBtn = document.getElementById('memoCardViewBtn');
+
+      if (memoList) {
+        memoList.classList.remove('memo-list-view', 'memo-card-view');
+        memoList.classList.add(view === 'card' ? 'memo-card-view' : 'memo-list-view');
+      }
+
+      if (listBtn) listBtn.classList.toggle('active', view === 'list');
+      if (cardBtn) cardBtn.classList.toggle('active', view === 'card');
+    }
+
+    loadMemos();
+
+    function openMemoModal() {
+      editingMemoId = null;
+
+      const modal = document.getElementById('memoModal');
+      const titleElement = document.getElementById('memoModalTitle');
+      const contentInput = document.getElementById('memoContentInput');
+      const tagsInput = document.getElementById('memoTagsInput');
+      const deleteBtn = document.getElementById('deleteMemoBtn');
+
+      if (titleElement) titleElement.textContent = 'メモを追加';
+      if (contentInput) contentInput.value = '';
+      if (tagsInput) tagsInput.value = '';
+      if (deleteBtn) deleteBtn.style.display = 'none';
+      if (modal) modal.style.display = 'block';
+    }
+
+    function editMemo(id) {
+      const memo = allMemos.find(function(m) { return m.id === id; });
+      if (!memo) {
+        alert('メモが見つかりません');
+        return;
+      }
+
+      editingMemoId = id;
+
+      const modal = document.getElementById('memoModal');
+      const titleElement = document.getElementById('memoModalTitle');
+      const contentInput = document.getElementById('memoContentInput');
+      const tagsInput = document.getElementById('memoTagsInput');
+      const deleteBtn = document.getElementById('deleteMemoBtn');
+
+      if (titleElement) titleElement.textContent = 'メモを編集';
+      if (contentInput) contentInput.value = memo.content;
+      if (tagsInput) tagsInput.value = memo.tags ? memo.tags.join(', ') : '';
+      if (deleteBtn) deleteBtn.style.display = 'flex';
+      if (modal) modal.style.display = 'block';
+    }
+
+    function saveMemo() {
+      const contentInput = document.getElementById('memoContentInput');
+      const tagsInput = document.getElementById('memoTagsInput');
+
+      const content = contentInput ? contentInput.value.trim() : '';
+      const tagsStr = tagsInput ? tagsInput.value.trim() : '';
+
+      if (!content) {
+        alert('メモ内容を入力してください');
+        return;
+      }
+
+      // タグをパース（カンマ区切り、空白トリム、空文字除去）
+      const tags = tagsStr ? tagsStr.split(',').map(function(t) { return t.trim(); }).filter(function(t) { return t.length > 0; }) : [];
+
+      closeModal('memoModal');
+
+      if (editingMemoId) {
+        google.script.run
+          .withSuccessHandler(function(result) {
+            if (result.success) {
+              loadMemos();
+            } else {
+              alert('メモの更新に失敗しました');
+            }
+          })
+          .withFailureHandler(function(error) {
+            alert('メモの更新に失敗しました');
+          })
+          .updateMemo(editingMemoId, content, tags);
+      } else {
+        google.script.run
+          .withSuccessHandler(function(result) {
+            if (result.success) {
+              loadMemos();
+            } else {
+              alert('メモの追加に失敗しました');
+            }
+          })
+          .withFailureHandler(function(error) {
+            alert('メモの追加に失敗しました');
+          })
+          .saveMemo(content, tags);
+      }
+    }
+
+    function deleteMemo(id) {
+      if (!confirm('このメモを削除しますか?')) return;
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+          if (result.success) {
+            loadMemos();
+          } else {
+            alert('メモの削除に失敗しました');
+          }
+        })
+        .withFailureHandler(function(error) {
+          alert('メモの削除に失敗しました');
+        })
+        .deleteMemo(id);
+    }
+
+    function deleteMemoFromModal() {
+      if (!editingMemoId) return;
+      if (!confirm('このメモを削除しますか?')) return;
+
+      closeModal('memoModal');
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+          if (result.success) {
+            loadMemos();
+          } else {
+            alert('メモの削除に失敗しました');
+          }
+        })
+        .withFailureHandler(function(error) {
+          alert('メモの削除に失敗しました');
+        })
+        .deleteMemo(editingMemoId);
+    }
+
     function openLinkModal() {
       editingLinkId = null;
       
@@ -3782,8 +5422,16 @@
         .withSuccessHandler(function(data) {
           if (data.success) {
             eventDatesData = data.eventDates;
-            renderCalendar();
+          } else {
+            console.error('Failed to fetch month events', data && data.error);
+            eventDatesData = {};
           }
+          renderCalendar();
+        })
+        .withFailureHandler(function(error) {
+          console.error('getMonthEvents call failed', error);
+          eventDatesData = {};
+          renderCalendar();
         })
         .getMonthEvents(currentYear, currentMonth);
     }
@@ -3804,12 +5452,331 @@
       const today = new Date();
       currentYear = today.getFullYear();
       currentMonth = today.getMonth() + 1;
-      loadMonthEvents();
+      currentDayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      currentWeekStart = getWeekStart(today);
+      refreshCalendarView();
     }
+
+    function getWeekStart(date) {
+      const d = new Date(date);
+      const day = d.getDay();
+      const diff = d.getDate() - day;
+      return new Date(d.setDate(diff));
+    }
+
+    function setCalendarView(view) {
+      calendarView = view;
+
+      // ボタンのアクティブ状態を更新
+      document.getElementById('viewMonthBtn').classList.remove('active');
+      document.getElementById('viewWeekBtn').classList.remove('active');
+      document.getElementById('viewDayBtn').classList.remove('active');
+      document.getElementById('view' + view.charAt(0).toUpperCase() + view.slice(1) + 'Btn').classList.add('active');
+
+      // 表示エリアの切り替え
+      document.getElementById('calendarGrid').style.display = view === 'month' ? 'grid' : 'none';
+      document.getElementById('calendarWeekView').style.display = view === 'week' ? 'flex' : 'none';
+      document.getElementById('calendarDayView').style.display = view === 'day' ? 'flex' : 'none';
+
+      // 初期化
+      if (view === 'week' && !currentWeekStart) {
+        currentWeekStart = getWeekStart(new Date());
+      }
+      if (view === 'day' && !currentDayDate) {
+        currentDayDate = new Date();
+      }
+
+      refreshCalendarView();
+    }
+
+    function navigateCalendar(delta) {
+      if (calendarView === 'month') {
+        changeMonth(delta);
+      } else if (calendarView === 'week') {
+        currentWeekStart.setDate(currentWeekStart.getDate() + (delta * 7));
+        refreshCalendarView();
+      } else if (calendarView === 'day') {
+        currentDayDate.setDate(currentDayDate.getDate() + delta);
+        refreshCalendarView();
+      }
+    }
+
+    function refreshCalendarView() {
+      if (calendarView === 'month') {
+        loadMonthEvents();
+      } else if (calendarView === 'week') {
+        renderWeekView();
+      } else if (calendarView === 'day') {
+        renderDayView();
+      }
+    }
+
+    function renderWeekView() {
+      const weekView = document.getElementById('calendarWeekView');
+      const monthElement = document.getElementById('calendarMonth');
+
+      if (!currentWeekStart) {
+        currentWeekStart = getWeekStart(new Date());
+      }
+
+      const weekEnd = new Date(currentWeekStart);
+      weekEnd.setDate(weekEnd.getDate() + 6);
+
+      // タイトル更新
+      if (monthElement) {
+        const startMonth = currentWeekStart.getMonth() + 1;
+        const endMonth = weekEnd.getMonth() + 1;
+        if (startMonth === endMonth) {
+          monthElement.textContent = currentWeekStart.getFullYear() + '年' + startMonth + '月 第' + getWeekNumber(currentWeekStart) + '週';
+        } else {
+          monthElement.textContent = startMonth + '/' + currentWeekStart.getDate() + ' - ' + endMonth + '/' + weekEnd.getDate();
+        }
+      }
+
+      // 週の各日のイベントを取得
+      loadWeekEvents();
+    }
+
+    function getWeekNumber(date) {
+      const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+      return Math.ceil((date.getDate() + firstDay.getDay()) / 7);
+    }
+
+    function loadWeekEvents() {
+      const weekView = document.getElementById('calendarWeekView');
+      if (!weekView) return;
+
+      weekView.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+      const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+      const today = new Date();
+      const todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+      const dayData = [];
+
+      for (let i = 0; i < 7; i++) {
+        const dayDate = new Date(currentWeekStart);
+        dayDate.setDate(currentWeekStart.getDate() + i);
+        const dateStr = dayDate.getFullYear() + '-' + String(dayDate.getMonth() + 1).padStart(2, '0') + '-' + String(dayDate.getDate()).padStart(2, '0');
+
+        dayData.push({
+          date: dayDate,
+          dateStr: dateStr,
+          dayName: weekdays[dayDate.getDay()],
+          isToday: dateStr === todayStr
+        });
+      }
+
+      // すべての日のイベントを並列で取得
+      let completedRequests = 0;
+      const allEvents = {};
+
+      dayData.forEach(function(day, index) {
+        google.script.run
+          .withSuccessHandler(function(data) {
+            allEvents[day.dateStr] = data.success ? data.events : [];
+            completedRequests++;
+
+            if (completedRequests === 7) {
+              renderWeekViewGrid(dayData, allEvents);
+            }
+          })
+          .getCalendarEvents(day.dateStr);
+      });
+    }
+
+    function renderWeekViewGrid(dayData, allEvents) {
+      const weekView = document.getElementById('calendarWeekView');
+      if (!weekView) return;
+
+      let html = '';
+
+      // ヘッダー行（曜日と日付）
+      html += '<div class="week-header-row">';
+      html += '<div class="week-time-header"></div>';
+      dayData.forEach(function(d) {
+        html += '<div class="week-day-header-cell' + (d.isToday ? ' today' : '') + '" onclick="showDayEvents(\'' + d.dateStr + '\')">';
+        html += '<div>' + d.dayName + '</div>';
+        html += '<div class="week-day-header-num">' + d.date.getDate() + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+
+      // 終日イベント行
+      html += '<div class="week-allday-row">';
+      html += '<div class="week-allday-label">終日</div>';
+      html += '<div class="week-allday-events">';
+      dayData.forEach(function(d) {
+        const events = allEvents[d.dateStr] || [];
+        const alldayEvents = events.filter(function(e) { return e.isAllDay; });
+        html += '<div class="week-allday-cell">';
+        alldayEvents.slice(0, 2).forEach(function(event) {
+          const key = cacheEvent(event);
+          html += '<div class="week-allday-event" onclick="showEventDetailById(\'' + key + '\')">' + escapeHtml(event.title) + '</div>';
+        });
+        html += '</div>';
+      });
+      html += '</div>';
+      html += '</div>';
+
+      // 時間グリッド
+      html += '<div class="week-body">';
+
+      // 時間ラベル列
+      html += '<div class="week-time-column">';
+      for (let h = 0; h < 24; h++) {
+        html += '<div class="week-time-slot-label">' + String(h).padStart(2, '0') + ':00</div>';
+      }
+      html += '</div>';
+
+      // 各日の列
+      html += '<div class="week-days-container">';
+      dayData.forEach(function(d) {
+        const events = allEvents[d.dateStr] || [];
+        const timedEvents = events.filter(function(e) { return !e.isAllDay; });
+
+        html += '<div class="week-day-column' + (d.isToday ? ' today' : '') + '" data-date="' + d.dateStr + '">';
+
+        // 24時間のセル
+        for (let h = 0; h < 24; h++) {
+          html += '<div class="week-hour-cell" data-hour="' + h + '"></div>';
+        }
+
+        // イベントを配置
+        timedEvents.forEach(function(event) {
+          const startTime = new Date(event.startTime);
+          const endTime = new Date(event.endTime);
+          const startHour = startTime.getHours() + startTime.getMinutes() / 60;
+          const endHour = endTime.getHours() + endTime.getMinutes() / 60;
+          const duration = Math.max(endHour - startHour, 0.5);
+          const top = startHour * 30;
+          const height = Math.max(duration * 30 - 2, 14);
+
+          const key = cacheEvent(event);
+          html += '<div class="week-event-item" style="top: ' + top + 'px; height: ' + height + 'px;" onclick="showEventDetailById(\'' + key + '\')">';
+          html += '<div class="week-event-title">' + escapeHtml(event.title) + '</div>';
+          html += '</div>';
+        });
+
+        html += '</div>';
+      });
+      html += '</div>';
+      html += '</div>';
+
+      weekView.innerHTML = html;
+    }
+
+    function renderDayView() {
+      const dayView = document.getElementById('calendarDayView');
+      const monthElement = document.getElementById('calendarMonth');
+
+      if (!currentDayDate) {
+        currentDayDate = new Date();
+      }
+
+      const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+      const dateStr = currentDayDate.getFullYear() + '-' +
+                     String(currentDayDate.getMonth() + 1).padStart(2, '0') + '-' +
+                     String(currentDayDate.getDate()).padStart(2, '0');
+
+      // タイトル更新
+      if (monthElement) {
+        monthElement.textContent = currentDayDate.getFullYear() + '年' + (currentDayDate.getMonth() + 1) + '月' + currentDayDate.getDate() + '日 (' + weekdays[currentDayDate.getDay()] + ')';
+      }
+
+      if (!dayView) return;
+
+      dayView.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+      google.script.run
+        .withSuccessHandler(function(data) {
+          renderDayViewGrid(data, dateStr, weekdays);
+        })
+        .getCalendarEvents(dateStr);
+    }
+
+    function renderDayViewGrid(data, dateStr, weekdays) {
+      const dayView = document.getElementById('calendarDayView');
+      if (!dayView) return;
+
+      let html = '';
+
+      // ヘッダー
+      html += '<div class="day-view-header">';
+      html += '<div class="day-view-date">' + currentDayDate.getDate() + '</div>';
+      html += '<div class="day-view-weekday">' + weekdays[currentDayDate.getDay()] + '曜日</div>';
+      html += '</div>';
+
+      const events = (data.success && data.events) ? data.events : [];
+      const alldayEvents = events.filter(function(e) { return e.isAllDay; });
+      const timedEvents = events.filter(function(e) { return !e.isAllDay; });
+
+      // 終日イベント
+      if (alldayEvents.length > 0) {
+        html += '<div class="day-allday-section">';
+        html += '<div class="day-allday-label">終日</div>';
+        alldayEvents.forEach(function(event) {
+          const key = cacheEvent(event);
+          html += '<div class="day-allday-event" onclick="showEventDetailById(\'' + key + '\')">' + escapeHtml(event.title) + '</div>';
+        });
+        html += '</div>';
+      }
+
+      // 24時間グリッド
+      html += '<div class="day-time-grid">';
+
+      // 各時間の行を作成し、イベントを配置
+      for (let h = 0; h < 24; h++) {
+        html += '<div class="day-hour-row">';
+        html += '<div class="day-hour-label">' + String(h).padStart(2, '0') + ':00</div>';
+        html += '<div class="day-hour-events" data-hour="' + h + '">';
+
+        // この時間に開始するイベントを配置
+        timedEvents.forEach(function(event) {
+          const startTime = new Date(event.startTime);
+          const endTime = new Date(event.endTime);
+          const startHour = startTime.getHours();
+
+          if (startHour === h) {
+            const startMinutes = startTime.getMinutes();
+            const endHour = endTime.getHours() + endTime.getMinutes() / 60;
+            const duration = Math.max(endHour - (startHour + startMinutes / 60), 0.5);
+            const top = (startMinutes / 60) * 35;
+            const height = Math.max(duration * 35 - 2, 18);
+
+            const timeStr = String(startTime.getHours()).padStart(2, '0') + ':' +
+                           String(startTime.getMinutes()).padStart(2, '0') + ' - ' +
+                           String(endTime.getHours()).padStart(2, '0') + ':' +
+                           String(endTime.getMinutes()).padStart(2, '0');
+
+            const key = cacheEvent(event);
+            html += '<div class="day-event-item" style="top: ' + top + 'px; height: ' + height + 'px;" onclick="showEventDetailById(\'' + key + '\')">';
+            // html += '<div class="day-event-time">' + timeStr + '</div>';
+            html += '<div class="day-event-title">' + escapeHtml(event.title) + '</div>';
+            html += '</div>';
+          }
+        });
+
+        html += '</div>';
+        html += '</div>';
+      }
+
+      html += '</div>';
+
+      if (events.length === 0) {
+        html += '<div class="no-events-day">この日の予定はありません</div>';
+      }
+
+      dayView.innerHTML = html;
+    }
+
+    // 初期化
+    currentWeekStart = getWeekStart(new Date());
+    currentDayDate = new Date();
 
     loadMonthEvents();
     calendarRefreshInterval = setInterval(function() {
-      loadMonthEvents();
+      refreshCalendarView();
     }, 60000);
 
     function showDayEvents(dateStr) {
@@ -3852,31 +5819,40 @@
           }
           
           if (data.events && data.events.length > 0) {
+            // イベントをキャッシュに保存（詳細表示用）
+            dayEventsCache = {};
+            data.events.forEach(function(event, index) {
+              const key = event.id + '_' + index;
+              dayEventsCache[key] = event;
+            });
+
             let eventsHTML = '';
-            
-            data.events.forEach(function(event) {
+
+            data.events.forEach(function(event, index) {
               const startTime = new Date(event.startTime);
               const endTime = new Date(event.endTime);
-              
+
               let timeStr = '';
               if (event.isAllDay) {
                 timeStr = '終日';
               } else {
-                timeStr = String(startTime.getHours()).padStart(2, '0') + ':' + 
+                timeStr = String(startTime.getHours()).padStart(2, '0') + ':' +
                          String(startTime.getMinutes()).padStart(2, '0') + ' - ' +
-                         String(endTime.getHours()).padStart(2, '0') + ':' + 
+                         String(endTime.getHours()).padStart(2, '0') + ':' +
                          String(endTime.getMinutes()).padStart(2, '0');
               }
-              
+
               let clickHandler = '';
+              const key = event.id + '_' + index;
               if (event.isTodo) {
                 clickHandler = 'onclick="editTodoFromCalendar(\'' + event.taskId + '\', \'' + event.taskListId + '\', \'' + escapeHtml(event.title.replace('📋 ', '')).replace(/'/g, "\\'") + '\', \'' + (event.taskDue || '') + '\', \'' + escapeHtml(event.description || '').replace(/'/g, "\\'") + '\')"';
-              } else if (event.canEdit) {
-                clickHandler = 'onclick="editEvent(\'' + event.id + '\')"';
+              } else {
+                // 全てのカレンダーイベントで詳細画面を表示
+                clickHandler = 'onclick="showEventFromDayList(\'' + key + '\')"';
               }
-              
-              const itemClass = event.isTodo ? 'event-item todo-event' : 'event-item';
-              
+
+              const itemClass = event.isTodo ? 'event-item todo-event' : 'event-item clickable';
+
               eventsHTML += '<div class="' + itemClass + '" ' + clickHandler + '>';
               eventsHTML += '<div class="event-time">' + timeStr + '</div>';
               eventsHTML += '<div class="event-title">' + escapeHtml(event.title) + '</div>';
@@ -3889,7 +5865,7 @@
               eventsHTML += '<div class="event-details" style="margin-top: 5px; color: #7F8C8D;">📅 ' + escapeHtml(event.calendarName) + '</div>';
               eventsHTML += '</div>';
             });
-            
+
             if (modalBody) {
               modalBody.innerHTML = eventsHTML;
             }
@@ -3905,6 +5881,365 @@
           }
         })
         .getCalendarEvents(dateStr);
+    }
+
+    // RRULEを人間が読める形式に変換
+    function parseRecurrenceRule(rrule) {
+      if (!rrule) return '繰り返しあり';
+
+      // RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR などの形式をパース
+      const rule = rrule.replace('RRULE:', '');
+      const parts = {};
+      rule.split(';').forEach(function(part) {
+        const kv = part.split('=');
+        if (kv.length === 2) {
+          parts[kv[0]] = kv[1];
+        }
+      });
+
+      const freq = parts['FREQ'];
+      const interval = parseInt(parts['INTERVAL'] || '1');
+      const byday = parts['BYDAY'];
+      const bymonthday = parts['BYMONTHDAY'];
+      const count = parts['COUNT'];
+      const until = parts['UNTIL'];
+
+      let result = '';
+
+      // 頻度の変換
+      const freqMap = {
+        'DAILY': '毎日',
+        'WEEKLY': '毎週',
+        'MONTHLY': '毎月',
+        'YEARLY': '毎年'
+      };
+
+      if (interval > 1) {
+        switch (freq) {
+          case 'DAILY': result = interval + '日ごと'; break;
+          case 'WEEKLY': result = interval + '週間ごと'; break;
+          case 'MONTHLY': result = interval + 'か月ごと'; break;
+          case 'YEARLY': result = interval + '年ごと'; break;
+          default: result = freqMap[freq] || freq;
+        }
+      } else {
+        result = freqMap[freq] || freq;
+      }
+
+      // 曜日の変換
+      if (byday) {
+        const dayMap = {
+          'MO': '月', 'TU': '火', 'WE': '水', 'TH': '木',
+          'FR': '金', 'SA': '土', 'SU': '日'
+        };
+        const days = byday.split(',').map(function(d) {
+          // 序数付きの場合 (1MO = 第1月曜など)
+          const match = d.match(/^(-?\d)?(.+)$/);
+          if (match) {
+            const num = match[1];
+            const day = dayMap[match[2]] || match[2];
+            if (num) {
+              const numMap = {'1': '第1', '2': '第2', '3': '第3', '4': '第4', '5': '第5', '-1': '最終'};
+              return (numMap[num] || num) + day + '曜';
+            }
+            return day + '曜';
+          }
+          return dayMap[d] || d;
+        });
+        result += ' (' + days.join('・') + ')';
+      }
+
+      // 日付指定
+      if (bymonthday) {
+        result += ' (' + bymonthday + '日)';
+      }
+
+      // 終了条件
+      if (count) {
+        result += ' / ' + count + '回まで';
+      }
+      if (until) {
+        // UNTIL=20241231T235959Z 形式
+        const year = until.substring(0, 4);
+        const month = until.substring(4, 6);
+        const day = until.substring(6, 8);
+        result += ' / ' + year + '年' + parseInt(month) + '月' + parseInt(day) + '日まで';
+      }
+
+      // 結果が空の場合はフォールバック
+      return result || '繰り返しあり';
+    }
+
+    function showEventDetail(event) {
+      const modal = document.getElementById('eventModal');
+      const modalBody = document.getElementById('eventModalBody');
+      const addBtn = document.getElementById('addEventFromDateBtn');
+      const titleElement = document.getElementById('eventModalTitle');
+
+      if (titleElement) {
+        titleElement.textContent = '予定の詳細';
+      }
+
+      if (addBtn) {
+        addBtn.style.display = 'none';
+      }
+
+      if (modalBody) {
+        const startTime = new Date(event.startTime);
+        const endTime = new Date(event.endTime);
+        const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+
+        let timeStr = '';
+        let dateStr = startTime.getFullYear() + '年' + (startTime.getMonth() + 1) + '月' + startTime.getDate() + '日 (' + weekdays[startTime.getDay()] + ')';
+
+        if (event.isAllDay) {
+          timeStr = '終日';
+        } else {
+          timeStr = String(startTime.getHours()).padStart(2, '0') + ':' + String(startTime.getMinutes()).padStart(2, '0') +
+                    ' ～ ' +
+                    String(endTime.getHours()).padStart(2, '0') + ':' + String(endTime.getMinutes()).padStart(2, '0');
+        }
+
+        let html = '<div class="event-detail-container">';
+
+        // タイトル
+        html += '<div class="event-detail-title">';
+        html += '<span class="material-icons">event</span>';
+        html += '<span>' + escapeHtml(event.title) + '</span>';
+        html += '</div>';
+
+        // 日時
+        html += '<div class="event-detail-row">';
+        html += '<span class="material-icons">schedule</span>';
+        html += '<div class="event-detail-content">';
+        html += '<div class="event-detail-label">日時</div>';
+        html += '<div class="event-detail-value">' + dateStr + '<br>' + timeStr + '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        // 繰り返し予定
+        if (event.isRecurring) {
+          const recurrenceText = parseRecurrenceRule(event.recurrenceRule);
+          html += '<div class="event-detail-row">';
+          html += '<span class="material-icons">repeat</span>';
+          html += '<div class="event-detail-content">';
+          html += '<div class="event-detail-label">繰り返し</div>';
+          html += '<div class="event-detail-value">';
+          html += '<span class="recurrence-badge"><span class="material-icons">sync</span>' + escapeHtml(recurrenceText) + '</span>';
+          html += '</div>';
+          html += '</div>';
+          html += '</div>';
+        }
+
+        // 場所
+        if (event.location) {
+          const isOnlineMeetingLocation = event.location.indexOf('meet.google.com') !== -1 ||
+                                          event.location.indexOf('teams.microsoft.com') !== -1 ||
+                                          event.location.indexOf('teams.live.com') !== -1 ||
+                                          event.location.indexOf('zoom.us') !== -1;
+
+          html += '<div class="event-detail-row">';
+          html += '<span class="material-icons">' + (isOnlineMeetingLocation ? 'videocam' : 'location_on') + '</span>';
+          html += '<div class="event-detail-content">';
+          html += '<div class="event-detail-label">場所</div>';
+          html += '<div class="event-detail-value">';
+          if (isOnlineMeetingLocation && event.conferenceLink) {
+            html += '<a href="' + escapeHtml(event.conferenceLink) + '" target="_blank">オンライン会議</a>';
+          } else {
+            html += escapeHtml(event.location);
+          }
+          html += '</div>';
+          html += '</div>';
+          html += '</div>';
+        }
+
+        // 会議参加ボタン
+        if (event.conferenceLink) {
+          let buttonLabel = '会議に参加';
+          let buttonClass = 'other';
+          let buttonIcon = 'video_call';
+
+          switch (event.conferenceType) {
+            case 'meet':
+              buttonLabel = 'Google Meet に参加';
+              buttonClass = 'meet';
+              buttonIcon = 'videocam';
+              break;
+            case 'teams':
+              buttonLabel = 'Microsoft Teams に参加';
+              buttonClass = 'teams';
+              buttonIcon = 'groups';
+              break;
+            case 'zoom':
+              buttonLabel = 'Zoom に参加';
+              buttonClass = 'zoom';
+              buttonIcon = 'videocam';
+              break;
+          }
+
+          html += '<div class="event-detail-row">';
+          html += '<span class="material-icons">meeting_room</span>';
+          html += '<div class="event-detail-content">';
+          html += '<div class="event-detail-label">オンライン会議</div>';
+          html += '<div class="event-detail-value">';
+          html += '<a href="' + escapeHtml(event.conferenceLink) + '" target="_blank" class="conference-join-btn ' + buttonClass + '">';
+          html += '<span class="material-icons">' + buttonIcon + '</span>';
+          html += '<span>' + buttonLabel + '</span>';
+          html += '</a>';
+          html += '</div>';
+          html += '</div>';
+          html += '</div>';
+        }
+
+        // 詳細/説明
+        if (event.description) {
+          html += '<div class="event-detail-row">';
+          html += '<span class="material-icons">notes</span>';
+          html += '<div class="event-detail-content">';
+          html += '<div class="event-detail-label">詳細</div>';
+          html += '<div class="event-detail-value">';
+          html += '<div class="event-detail-description">' + escapeHtml(event.description).replace(/\n/g, '<br>') + '</div>';
+          html += '</div>';
+          html += '</div>';
+          html += '</div>';
+        }
+
+        // カレンダー名
+        html += '<div class="event-detail-row">';
+        html += '<span class="material-icons">calendar_today</span>';
+        html += '<div class="event-detail-content">';
+        html += '<div class="event-detail-label">カレンダー</div>';
+        html += '<div class="event-detail-value">';
+        html += '<span class="event-detail-calendar"><span class="material-icons">folder</span>' + escapeHtml(event.calendarName) + '</span>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        // 編集・削除ボタン（編集可能な予定のみ、Todoは除く）
+        if (event.canEdit && !event.isTodo) {
+          html += '<div class="event-detail-actions">';
+          html += '<button class="event-detail-btn edit" onclick="editEventFromDetail()">';
+          html += '<span class="material-icons">edit</span>';
+          html += '<span>編集</span>';
+          html += '</button>';
+          html += '<button class="event-detail-btn delete" onclick="deleteEventFromDetail()">';
+          html += '<span class="material-icons">delete</span>';
+          html += '<span>削除</span>';
+          html += '</button>';
+          html += '</div>';
+        }
+
+        html += '</div>';
+        modalBody.innerHTML = html;
+
+        // 編集用にイベントデータを保存
+        currentDetailEvent = event;
+        // currentEventDateを設定（編集機能で使用）
+        const eventDateStr = startTime.getFullYear() + '-' +
+                            String(startTime.getMonth() + 1).padStart(2, '0') + '-' +
+                            String(startTime.getDate()).padStart(2, '0');
+        currentEventDate = eventDateStr;
+      }
+
+      if (modal) {
+        modal.style.display = 'block';
+      }
+    }
+
+    // 詳細画面から編集を開く
+    function editEventFromDetail() {
+      if (!currentDetailEvent) return;
+
+      const event = currentDetailEvent;
+      closeModal('eventModal');
+
+      editingEventId = event.id;
+      editingEventCalendarId = event.calendarId || null;
+
+      const titleElement = document.getElementById('eventEditModalTitle');
+      if (titleElement) titleElement.textContent = '予定を編集';
+
+      const titleInput = document.getElementById('eventTitleInput');
+      if (titleInput) titleInput.value = event.title;
+
+      const locationInput = document.getElementById('eventLocationInput');
+      if (locationInput) locationInput.value = event.location || '';
+
+      const descriptionInput = document.getElementById('eventDescriptionInput');
+      if (descriptionInput) descriptionInput.value = event.description || '';
+
+      const startDate = new Date(event.startTime);
+      const endDate = new Date(event.endTime);
+
+      const allDayCheckbox = document.getElementById('eventAllDayCheckbox');
+      const dateTimeRow = document.getElementById('eventDateTimeRow');
+      const dateRow = document.getElementById('eventDateRow');
+
+      if (event.isAllDay) {
+        if (allDayCheckbox) allDayCheckbox.checked = true;
+        if (dateTimeRow) dateTimeRow.style.display = 'none';
+        if (dateRow) dateRow.style.display = 'grid';
+
+        const startDateInput = document.getElementById('eventStartDateInput');
+        if (startDateInput) startDateInput.value = formatDateOnly(startDate);
+
+        const endDateInput = document.getElementById('eventEndDateInput');
+        if (endDateInput) endDateInput.value = formatDateOnly(endDate);
+      } else {
+        if (allDayCheckbox) allDayCheckbox.checked = false;
+        if (dateTimeRow) dateTimeRow.style.display = 'grid';
+        if (dateRow) dateRow.style.display = 'none';
+
+        const startInput = document.getElementById('eventStartInput');
+        if (startInput) startInput.value = formatDateTimeLocal(startDate);
+
+        const endInput = document.getElementById('eventEndInput');
+        if (endInput) endInput.value = formatDateTimeLocal(endDate);
+      }
+
+      const deleteBtn = document.getElementById('deleteEventBtn');
+      if (deleteBtn) deleteBtn.style.display = 'flex';
+
+      const modal = document.getElementById('eventEditModal');
+      if (modal) modal.style.display = 'block';
+    }
+
+    // 詳細画面から削除
+    function deleteEventFromDetail() {
+      if (!currentDetailEvent) return;
+
+      if (!confirm('この予定を削除しますか？')) return;
+
+      const event = currentDetailEvent;
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+          if (result.success) {
+            closeModal('eventModal');
+            // カレンダーを更新
+            if (currentView === 'month') {
+              renderMonthCalendar();
+            } else if (currentView === 'week') {
+              renderWeekView();
+            } else if (currentView === 'day') {
+              renderDayView();
+            }
+            loadNextEvent();
+          } else {
+            alert('削除に失敗しました: ' + (result.error || ''));
+          }
+        })
+        .withFailureHandler(function(error) {
+          alert('削除に失敗しました: ' + error);
+        })
+        .deleteCalendarEvent(event.id, event.calendarId);
+    }
+
+    // 日別イベントリストからイベント詳細を表示
+    function showEventFromDayList(key) {
+      const event = dayEventsCache[key];
+      if (!event) return;
+      showEventDetail(event);
     }
 
     function openEventModalFromDate() {
@@ -3931,10 +6266,13 @@
       
       const dateRow = document.getElementById('eventDateRow');
       if (dateRow) dateRow.style.display = 'none';
-      
+
+      // 繰り返し設定をリセット
+      resetRecurrenceForm();
+
       const deleteBtn = document.getElementById('deleteEventBtn');
       if (deleteBtn) deleteBtn.style.display = 'none';
-      
+
       if (currentEventDate) {
         const now = new Date();
         const roundedHour = Math.ceil(now.getHours());
@@ -4008,6 +6346,7 @@
 
     function openEventModal() {
       editingEventId = null;
+      editingEventCalendarId = null;
       
       const titleElement = document.getElementById('eventEditModalTitle');
       if (titleElement) titleElement.textContent = '予定を追加';
@@ -4029,10 +6368,13 @@
       
       const dateRow = document.getElementById('eventDateRow');
       if (dateRow) dateRow.style.display = 'none';
-      
+
+      // 繰り返し設定をリセット
+      resetRecurrenceForm();
+
       const deleteBtn = document.getElementById('deleteEventBtn');
       if (deleteBtn) deleteBtn.style.display = 'none';
-      
+
       const now = new Date();
       const roundedHour = Math.ceil(now.getHours());
       const roundedMinutes = now.getMinutes() > 30 ? '30' : '00';
@@ -4115,8 +6457,132 @@
       }
     }
 
-    function editEvent(eventId) {
+    function toggleRecurrenceOptions() {
+      const recurrenceSelect = document.getElementById('eventRecurrenceSelect');
+      const optionsRow = document.getElementById('recurrenceOptionsRow');
+
+      if (!recurrenceSelect || !optionsRow) return;
+
+      if (recurrenceSelect.value) {
+        optionsRow.style.display = 'grid';
+      } else {
+        optionsRow.style.display = 'none';
+        // リセット
+        const endTypeSelect = document.getElementById('eventRecurrenceEndType');
+        if (endTypeSelect) endTypeSelect.value = 'never';
+        toggleRecurrenceEndInput();
+      }
+    }
+
+    function toggleRecurrenceEndInput() {
+      const endTypeSelect = document.getElementById('eventRecurrenceEndType');
+      const untilGroup = document.getElementById('recurrenceUntilGroup');
+      const countGroup = document.getElementById('recurrenceCountGroup');
+
+      if (!endTypeSelect || !untilGroup || !countGroup) return;
+
+      const endType = endTypeSelect.value;
+
+      untilGroup.style.display = endType === 'until' ? 'block' : 'none';
+      countGroup.style.display = endType === 'count' ? 'block' : 'none';
+    }
+
+    function resetRecurrenceForm() {
+      const recurrenceSelect = document.getElementById('eventRecurrenceSelect');
+      const optionsRow = document.getElementById('recurrenceOptionsRow');
+      const endTypeSelect = document.getElementById('eventRecurrenceEndType');
+      const untilInput = document.getElementById('eventRecurrenceUntil');
+      const countInput = document.getElementById('eventRecurrenceCount');
+
+      if (recurrenceSelect) recurrenceSelect.value = '';
+      if (optionsRow) optionsRow.style.display = 'none';
+      if (endTypeSelect) endTypeSelect.value = 'never';
+      if (untilInput) untilInput.value = '';
+      if (countInput) countInput.value = '10';
+
+      toggleRecurrenceEndInput();
+    }
+
+    function setRecurrenceFromRule(rrule) {
+      if (!rrule) {
+        resetRecurrenceForm();
+        return;
+      }
+
+      const recurrenceSelect = document.getElementById('eventRecurrenceSelect');
+      const endTypeSelect = document.getElementById('eventRecurrenceEndType');
+      const untilInput = document.getElementById('eventRecurrenceUntil');
+      const countInput = document.getElementById('eventRecurrenceCount');
+      const optionsRow = document.getElementById('recurrenceOptionsRow');
+
+      // RRULE:FREQ=DAILY;UNTIL=20251231T235959Z のような形式をパース
+      const ruleStr = rrule.replace('RRULE:', '');
+      const parts = ruleStr.split(';');
+      const params = {};
+
+      parts.forEach(function(part) {
+        const [key, value] = part.split('=');
+        params[key] = value;
+      });
+
+      // 頻度を設定
+      if (params.FREQ && recurrenceSelect) {
+        recurrenceSelect.value = params.FREQ;
+        if (optionsRow) optionsRow.style.display = 'grid';
+      }
+
+      // 終了条件を設定
+      if (params.UNTIL && endTypeSelect) {
+        endTypeSelect.value = 'until';
+        if (untilInput) {
+          // 20251231T235959Z -> 2025-12-31
+          const untilStr = params.UNTIL;
+          const year = untilStr.substring(0, 4);
+          const month = untilStr.substring(4, 6);
+          const day = untilStr.substring(6, 8);
+          untilInput.value = year + '-' + month + '-' + day;
+        }
+      } else if (params.COUNT && endTypeSelect) {
+        endTypeSelect.value = 'count';
+        if (countInput) countInput.value = params.COUNT;
+      } else if (endTypeSelect) {
+        endTypeSelect.value = 'never';
+      }
+
+      toggleRecurrenceEndInput();
+    }
+
+    function buildRecurrenceRule() {
+      const recurrenceSelect = document.getElementById('eventRecurrenceSelect');
+      const freq = recurrenceSelect ? recurrenceSelect.value : '';
+
+      if (!freq) return '';
+
+      let rule = 'RRULE:FREQ=' + freq;
+
+      const endTypeSelect = document.getElementById('eventRecurrenceEndType');
+      const endType = endTypeSelect ? endTypeSelect.value : 'never';
+
+      if (endType === 'until') {
+        const untilInput = document.getElementById('eventRecurrenceUntil');
+        if (untilInput && untilInput.value) {
+          // 2025-12-31 -> 20251231T235959Z
+          const untilDate = untilInput.value.replace(/-/g, '') + 'T235959Z';
+          rule += ';UNTIL=' + untilDate;
+        }
+      } else if (endType === 'count') {
+        const countInput = document.getElementById('eventRecurrenceCount');
+        if (countInput && countInput.value) {
+          rule += ';COUNT=' + countInput.value;
+        }
+      }
+
+      return rule;
+    }
+
+    function editEvent(eventId, calendarId, isAllDay) {
       closeModal('eventModal');
+      editingEventCalendarId = calendarId || null;
       
       google.script.run
         .withSuccessHandler(function(data) {
@@ -4132,6 +6598,7 @@
           }
           
           editingEventId = eventId;
+          editingEventCalendarId = event.calendarId || calendarId || null;
           
           const titleElement = document.getElementById('eventEditModalTitle');
           if (titleElement) titleElement.textContent = '予定を編集';
@@ -4173,10 +6640,17 @@
             const endInput = document.getElementById('eventEndInput');
             if (endInput) endInput.value = formatDateTimeLocal(endDate);
           }
-          
+
+          // 繰り返し設定を読み込み
+          if (event.isRecurring && event.recurrenceRule) {
+            setRecurrenceFromRule(event.recurrenceRule);
+          } else {
+            resetRecurrenceForm();
+          }
+
           const deleteBtn = document.getElementById('deleteEventBtn');
           if (deleteBtn) deleteBtn.style.display = 'flex';
-          
+
           const modal = document.getElementById('eventEditModal');
           if (modal) modal.style.display = 'block';
         })
@@ -4188,26 +6662,27 @@
       const locationInput = document.getElementById('eventLocationInput');
       const descriptionInput = document.getElementById('eventDescriptionInput');
       const allDayCheckbox = document.getElementById('eventAllDayCheckbox');
-      
+
       const title = titleInput ? titleInput.value.trim() : '';
       const location = locationInput ? locationInput.value.trim() : '';
       const description = descriptionInput ? descriptionInput.value.trim() : '';
       const isAllDay = allDayCheckbox ? allDayCheckbox.checked : false;
-      
+      const recurrenceRule = buildRecurrenceRule();
+
       let startTime, endTime;
-      
+
       if (isAllDay) {
         const startDateInput = document.getElementById('eventStartDateInput');
         const endDateInput = document.getElementById('eventEndDateInput');
-        
+
         const startDate = startDateInput ? startDateInput.value : '';
         const endDate = endDateInput ? endDateInput.value : '';
-        
+
         if (!title || !startDate || !endDate) {
           alert('タイトル、開始日、終了日は必須です');
           return;
         }
-        
+
         startTime = startDate + 'T00:00:00';
         const endDateObj = new Date(endDate);
         endDateObj.setDate(endDateObj.getDate() + 1);
@@ -4215,18 +6690,18 @@
       } else {
         const startInput = document.getElementById('eventStartInput');
         const endInput = document.getElementById('eventEndInput');
-        
+
         startTime = startInput ? startInput.value : '';
         endTime = endInput ? endInput.value : '';
-        
+
         if (!title || !startTime || !endTime) {
           alert('タイトル、開始日時、終了日時は必須です');
           return;
         }
       }
-      
+
       closeModal('eventEditModal');
-      
+
       if (editingEventId) {
         google.script.run
           .withSuccessHandler(function(result) {
@@ -4237,13 +6712,13 @@
                 showDayEvents(currentEventDate);
               }
             } else {
-              alert('予定の更新に失敗しました');
+              alert('予定の更新に失敗しました: ' + (result.error || ''));
             }
           })
           .withFailureHandler(function(error) {
             alert('予定の更新に失敗しました');
           })
-          .updateCalendarEvent(editingEventId, title, startTime, endTime, description, location);
+          .updateCalendarEvent(editingEventId, editingEventCalendarId, title, startTime, endTime, description, location, isAllDay, recurrenceRule);
       } else {
         google.script.run
           .withSuccessHandler(function(result) {
@@ -4251,13 +6726,13 @@
               loadMonthEvents();
               updateSummaryDashboard();
             } else {
-              alert('予定の追加に失敗しました');
+              alert('予定の追加に失敗しました: ' + (result.error || ''));
             }
           })
           .withFailureHandler(function(error) {
             alert('予定の追加に失敗しました');
           })
-          .addCalendarEvent(title, startTime, endTime, description, location);
+          .addCalendarEvent(title, startTime, endTime, description, location, recurrenceRule);
       }
     }
 
@@ -4281,7 +6756,7 @@
         .withFailureHandler(function(error) {
           alert('予定の削除に失敗しました');
         })
-        .deleteCalendarEvent(editingEventId);
+        .deleteCalendarEvent(editingEventId, editingEventCalendarId);
     }
 
     function closeModal(modalId) {

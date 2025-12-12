@@ -8,6 +8,11 @@
         "serviceId": "tasks"
       },
       {
+        "userSymbol": "Calendar",
+        "version": "v3",
+        "serviceId": "calendar"
+      },
+      {
         "userSymbol": "Chat",
         "version": "v1",
         "serviceId": "chat"

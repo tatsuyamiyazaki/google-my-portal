@@ -433,35 +433,214 @@ function deleteTodoTask(taskId, listId) {
   }
 }
 
+function getAccessibleCalendars() {
+  // Prefer the advanced Calendar API so we can honor access roles and fall back to CalendarApp if unavailable
+  try {
+    const calendars = [];
+    let pageToken = null;
+    
+    do {
+      const response = Calendar.CalendarList.list({
+        maxResults: 250,
+        minAccessRole: 'reader',
+        pageToken: pageToken
+      });
+      
+      if (response.items) {
+        response.items.forEach(function(item) {
+          calendars.push({
+            id: item.id,
+            name: item.summary,
+            canEdit: item.accessRole === 'owner' || item.accessRole === 'writer',
+            source: 'api'
+          });
+        });
+      }
+      
+      pageToken = response.nextPageToken;
+    } while (pageToken);
+    
+    if (calendars.length > 0) {
+      return calendars;
+    }
+  } catch (apiError) {
+    Logger.log('Advanced Calendar API unavailable, falling back to CalendarApp: ' + apiError.toString());
+  }
+  
+  try {
+    return CalendarApp.getAllCalendars().map(function(cal) {
+      return {
+        id: cal.getId(),
+        name: cal.getName(),
+        canEdit: cal.isOwnedByMe(),
+        source: 'app',
+        appCalendar: cal
+      };
+    });
+  } catch (fallbackError) {
+    Logger.log('CalendarApp.getAllCalendars failed: ' + fallbackError.toString());
+    return [];
+  }
+}
+
 function getCalendarEvents(dateStr) {
   try {
     const date = new Date(dateStr + 'T00:00:00');
     const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
     const endOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
-    
-    const calendars = CalendarApp.getAllCalendars();
     const allEvents = [];
+    const calendars = getAccessibleCalendars();
     
-    for (let i = 0; i < calendars.length; i++) {
-      const calendar = calendars[i];
-      const events = calendar.getEvents(startOfDay, endOfDay);
-      
-      events.forEach(function(event) {
-        allEvents.push({
-          id: event.getId(),
-          title: event.getTitle(),
-          startTime: event.getStartTime().getTime(),
-          endTime: event.getEndTime().getTime(),
-          location: event.getLocation() || '',
-          description: event.getDescription() || '',
-          calendarName: calendar.getName(),
-          calendarId: calendar.getId(),
-          isAllDay: event.isAllDayEvent(),
-          canEdit: calendar.isOwnedByMe(),
-          isTodo: false
-        });
-      });
-    }
+    calendars.forEach(function(calendar) {
+      try {
+        if (calendar.source === 'api') {
+          let pageToken = null;
+          do {
+            const response = Calendar.Events.list(calendar.id, {
+              timeMin: startOfDay.toISOString(),
+              timeMax: endOfDay.toISOString(),
+              singleEvents: true,
+              orderBy: 'startTime',
+              maxResults: 2500,
+              pageToken: pageToken
+            });
+            
+            const events = response.items || [];
+            events.forEach(function(event) {
+              const start = event.start.dateTime ? new Date(event.start.dateTime) : new Date(event.start.date);
+              const end = event.end.dateTime ? new Date(event.end.dateTime) : new Date(event.end.date);
+
+              // 会議リンクの取得
+              let conferenceLink = '';
+              let conferenceType = '';
+
+              // hangoutLink (Google Meet)
+              if (event.hangoutLink) {
+                conferenceLink = event.hangoutLink;
+                conferenceType = 'meet';
+              }
+
+              // conferenceData (より詳細な会議情報)
+              if (event.conferenceData && event.conferenceData.entryPoints) {
+                const videoEntry = event.conferenceData.entryPoints.find(function(ep) {
+                  return ep.entryPointType === 'video';
+                });
+                if (videoEntry && videoEntry.uri) {
+                  conferenceLink = videoEntry.uri;
+                  // 会議タイプの判定
+                  if (videoEntry.uri.indexOf('meet.google.com') !== -1) {
+                    conferenceType = 'meet';
+                  } else if (videoEntry.uri.indexOf('teams.microsoft.com') !== -1 || videoEntry.uri.indexOf('teams.live.com') !== -1) {
+                    conferenceType = 'teams';
+                  } else if (videoEntry.uri.indexOf('zoom.us') !== -1) {
+                    conferenceType = 'zoom';
+                  } else {
+                    conferenceType = 'other';
+                  }
+                }
+              }
+
+              // locationからも会議リンクを検出
+              if (!conferenceLink && event.location) {
+                if (event.location.indexOf('meet.google.com') !== -1) {
+                  conferenceLink = event.location.match(/https?:\/\/meet\.google\.com\/[^\s]*/)?.[0] || '';
+                  conferenceType = 'meet';
+                } else if (event.location.indexOf('teams.microsoft.com') !== -1 || event.location.indexOf('teams.live.com') !== -1) {
+                  conferenceLink = event.location.match(/https?:\/\/teams\.(microsoft|live)\.com\/[^\s]*/)?.[0] || '';
+                  conferenceType = 'teams';
+                } else if (event.location.indexOf('zoom.us') !== -1) {
+                  conferenceLink = event.location.match(/https?:\/\/[^\s]*zoom\.us\/[^\s]*/)?.[0] || '';
+                  conferenceType = 'zoom';
+                }
+              }
+
+              // 繰り返し予定のルール取得
+              let recurrenceRule = '';
+              const isRecurring = !!event.recurringEventId || (event.recurrence && event.recurrence.length > 0);
+
+              if (event.recurrence && event.recurrence.length > 0) {
+                // 元のイベント自体に繰り返しルールがある場合
+                recurrenceRule = event.recurrence[0];
+              } else if (event.recurringEventId) {
+                // 展開されたインスタンスの場合、元のイベントから取得を試みる
+                try {
+                  const originalEvent = Calendar.Events.get(calendar.id, event.recurringEventId);
+                  if (originalEvent.recurrence && originalEvent.recurrence.length > 0) {
+                    recurrenceRule = originalEvent.recurrence[0];
+                  }
+                } catch (e) {
+                  // 元イベントの取得に失敗した場合は空のまま
+                  Logger.log('Could not fetch original recurring event: ' + e.toString());
+                }
+              }
+
+              allEvents.push({
+                id: event.id,
+                title: event.summary || '(無題)',
+                startTime: start.getTime(),
+                endTime: end.getTime(),
+                location: event.location || '',
+                description: event.description || '',
+                calendarName: calendar.name,
+                calendarId: calendar.id,
+                isAllDay: !event.start.dateTime,
+                isRecurring: isRecurring,
+                recurrenceRule: recurrenceRule,
+                conferenceLink: conferenceLink,
+                conferenceType: conferenceType,
+                canEdit: calendar.canEdit,
+                isTodo: false
+              });
+            });
+            
+            pageToken = response.nextPageToken;
+          } while (pageToken);
+        } else if (calendar.appCalendar) {
+          const events = calendar.appCalendar.getEvents(startOfDay, endOfDay);
+
+          events.forEach(function(event) {
+            const location = event.getLocation() || '';
+            const description = event.getDescription() || '';
+
+            // CalendarAppからは会議リンクを直接取得できないので、locationとdescriptionから検出
+            let conferenceLink = '';
+            let conferenceType = '';
+
+            const textToSearch = location + ' ' + description;
+            if (textToSearch.indexOf('meet.google.com') !== -1) {
+              conferenceLink = textToSearch.match(/https?:\/\/meet\.google\.com\/[^\s<]*/)?.[0] || '';
+              conferenceType = 'meet';
+            } else if (textToSearch.indexOf('teams.microsoft.com') !== -1 || textToSearch.indexOf('teams.live.com') !== -1) {
+              conferenceLink = textToSearch.match(/https?:\/\/teams\.(microsoft|live)\.com\/[^\s<]*/)?.[0] || '';
+              conferenceType = 'teams';
+            } else if (textToSearch.indexOf('zoom.us') !== -1) {
+              conferenceLink = textToSearch.match(/https?:\/\/[^\s<]*zoom\.us\/[^\s<]*/)?.[0] || '';
+              conferenceType = 'zoom';
+            }
+
+            allEvents.push({
+              id: event.getId(),
+              title: event.getTitle(),
+              startTime: event.getStartTime().getTime(),
+              endTime: event.getEndTime().getTime(),
+              location: location,
+              description: description,
+              calendarName: calendar.name,
+              calendarId: calendar.id,
+              isAllDay: event.isAllDayEvent(),
+              isRecurring: event.isRecurring(),
+              recurrenceRule: '',
+              conferenceLink: conferenceLink,
+              conferenceType: conferenceType,
+              canEdit: calendar.canEdit,
+              isTodo: false
+            });
+          });
+        }
+      } catch (calendarError) {
+        Logger.log('Error fetching events for calendar ' + calendar.id + ': ' + calendarError.toString());
+      }
+    });
     
     try {
       const taskLists = Tasks.Tasklists.list().items;
@@ -527,17 +706,40 @@ function getCalendarEvents(dateStr) {
   }
 }
 
-function addCalendarEvent(title, startTime, endTime, description, location) {
+function addCalendarEvent(title, startTime, endTime, description, location, recurrenceRule) {
   try {
-    const calendar = CalendarApp.getDefaultCalendar();
     const start = new Date(startTime);
     const end = new Date(endTime);
-    
+    const tz = Session.getScriptTimeZone() || 'Asia/Tokyo';
+
+    // 繰り返しルールがある場合はCalendar APIを使用
+    if (recurrenceRule) {
+      const calendarId = CalendarApp.getDefaultCalendar().getId();
+      const body = {
+        summary: title,
+        description: description || '',
+        location: location || '',
+        start: { dateTime: start.toISOString(), timeZone: tz },
+        end: { dateTime: end.toISOString(), timeZone: tz },
+        recurrence: [recurrenceRule]
+      };
+
+      const createdEvent = Calendar.Events.insert(body, calendarId);
+
+      return {
+        success: true,
+        message: '繰り返し予定を追加しました',
+        eventId: createdEvent.id
+      };
+    }
+
+    // 繰り返しなしの場合は従来のCalendarAppを使用
+    const calendar = CalendarApp.getDefaultCalendar();
     const event = calendar.createEvent(title, start, end, {
       description: description || '',
       location: location || ''
     });
-    
+
     return {
       success: true,
       message: '予定を追加しました',
@@ -552,22 +754,82 @@ function addCalendarEvent(title, startTime, endTime, description, location) {
   }
 }
 
-function updateCalendarEvent(eventId, title, startTime, endTime, description, location) {
+function updateCalendarEvent(eventId, calendarId, title, startTime, endTime, description, location, isAllDay, recurrenceRule) {
   try {
+    // Prefer Calendar API when calendarId is provided
+    if (calendarId) {
+      try {
+        const startDate = new Date(startTime);
+        const endDate = new Date(endTime);
+        const tz = Session.getScriptTimeZone() || 'Asia/Tokyo';
+
+        // まず現在のイベントを取得して繰り返し予定かチェック
+        const currentEvent = Calendar.Events.get(calendarId, eventId);
+        const isRecurringInstance = !!currentEvent.recurringEventId;
+        const targetEventId = isRecurringInstance ? currentEvent.recurringEventId : eventId;
+
+        const body = {
+          summary: title,
+          description: description || '',
+          location: location || ''
+        };
+
+        if (isAllDay) {
+          body.start = { date: Utilities.formatDate(startDate, tz, 'yyyy-MM-dd') };
+          body.end = { date: Utilities.formatDate(endDate, tz, 'yyyy-MM-dd') };
+        } else {
+          body.start = { dateTime: startDate.toISOString(), timeZone: tz };
+          body.end = { dateTime: endDate.toISOString(), timeZone: tz };
+        }
+
+        // 繰り返しルールの設定
+        if (recurrenceRule) {
+          body.recurrence = [recurrenceRule];
+        } else if (isRecurringInstance || (currentEvent.recurrence && currentEvent.recurrence.length > 0)) {
+          // 繰り返しを解除する場合は空配列
+          body.recurrence = [];
+        }
+
+        // 繰り返し予定のインスタンスの場合は元のイベントを更新
+        if (isRecurringInstance) {
+          // 繰り返し予定全体を更新
+          Calendar.Events.patch(body, calendarId, targetEventId);
+        } else {
+          Calendar.Events.patch(body, calendarId, eventId);
+        }
+
+        return {
+          success: true,
+          message: '予定を更新しました'
+        };
+      } catch (apiError) {
+        Logger.log('Calendar API update failed: ' + apiError.toString());
+        // Fall through to CalendarApp fallback
+      }
+    }
+
     const event = CalendarApp.getEventById(eventId);
-    
+
     if (!event) {
       return {
         success: false,
         error: 'イベントが見つかりません'
       };
     }
-    
+
     event.setTitle(title);
-    event.setTime(new Date(startTime), new Date(endTime));
     event.setDescription(description || '');
     event.setLocation(location || '');
-    
+
+    if (isAllDay) {
+      const startDate = new Date(startTime);
+      const endDate = new Date(endTime);
+      endDate.setDate(endDate.getDate() - 1);
+      event.setAllDayDates(startDate, endDate);
+    } else {
+      event.setTime(new Date(startTime), new Date(endTime));
+    }
+
     return {
       success: true,
       message: '予定を更新しました'
@@ -581,8 +843,21 @@ function updateCalendarEvent(eventId, title, startTime, endTime, description, lo
   }
 }
 
-function deleteCalendarEvent(eventId) {
+function deleteCalendarEvent(eventId, calendarId) {
   try {
+    if (calendarId) {
+      try {
+        Calendar.Events.remove(calendarId, eventId);
+        return {
+          success: true,
+          message: '予定を削除しました'
+        };
+      } catch (apiError) {
+        Logger.log('Calendar API delete failed: ' + apiError.toString());
+        // Fall back to CalendarApp
+      }
+    }
+    
     const event = CalendarApp.getEventById(eventId);
     
     if (!event) {
@@ -612,25 +887,51 @@ function getMonthEvents(year, month) {
     const startOfMonth = new Date(year, month - 1, 1, 0, 0, 0);
     const endOfMonth = new Date(year, month, 0, 23, 59, 59);
     
-    const calendars = CalendarApp.getAllCalendars();
     const eventDates = {};
+    const calendars = getAccessibleCalendars();
     
-    for (let i = 0; i < calendars.length; i++) {
-      const calendar = calendars[i];
-      const events = calendar.getEvents(startOfMonth, endOfMonth);
-      
-      events.forEach(function(event) {
-        const eventDate = new Date(event.getStartTime());
-        const dateKey = eventDate.getFullYear() + '-' + 
-                       String(eventDate.getMonth() + 1).padStart(2, '0') + '-' + 
-                       String(eventDate.getDate()).padStart(2, '0');
-        
-        if (!eventDates[dateKey]) {
-          eventDates[dateKey] = 0;
+    calendars.forEach(function(calendar) {
+      try {
+        if (calendar.source === 'api') {
+          let pageToken = null;
+          do {
+            const response = Calendar.Events.list(calendar.id, {
+              timeMin: startOfMonth.toISOString(),
+              timeMax: endOfMonth.toISOString(),
+              singleEvents: true,
+              orderBy: 'startTime',
+              maxResults: 2500,
+              pageToken: pageToken
+            });
+            
+            const events = response.items || [];
+            events.forEach(function(event) {
+              const eventDate = event.start.dateTime ? new Date(event.start.dateTime) : new Date(event.start.date);
+              const dateKey = eventDate.getFullYear() + '-' + 
+                             String(eventDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                             String(eventDate.getDate()).padStart(2, '0');
+              
+              eventDates[dateKey] = (eventDates[dateKey] || 0) + 1;
+            });
+            
+            pageToken = response.nextPageToken;
+          } while (pageToken);
+        } else if (calendar.appCalendar) {
+          const events = calendar.appCalendar.getEvents(startOfMonth, endOfMonth);
+          
+          events.forEach(function(event) {
+            const eventDate = new Date(event.getStartTime());
+            const dateKey = eventDate.getFullYear() + '-' + 
+                           String(eventDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                           String(eventDate.getDate()).padStart(2, '0');
+            
+            eventDates[dateKey] = (eventDates[dateKey] || 0) + 1;
+          });
         }
-        eventDates[dateKey]++;
-      });
-    }
+      } catch (calendarError) {
+        Logger.log('Error fetching month events for calendar ' + calendar.id + ': ' + calendarError.toString());
+      }
+    });
     
     try {
       const taskLists = Tasks.Tasklists.list().items;
@@ -1248,5 +1549,115 @@ function getChatData() {
       unreadCount: 0,
       error: error.toString()
     };
+  }
+}
+
+// --- Memo Functions ---
+
+function getMemos() {
+  try {
+    const userProperties = PropertiesService.getUserProperties();
+    const memosJson = userProperties.getProperty('memos');
+    const memos = memosJson ? JSON.parse(memosJson) : [];
+    return { success: true, memos: memos };
+  } catch (error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+function saveMemo(content, tags) {
+  try {
+    const userProperties = PropertiesService.getUserProperties();
+    const memosJson = userProperties.getProperty('memos');
+    const memos = memosJson ? JSON.parse(memosJson) : [];
+    
+    const newMemo = {
+      id: Utilities.getUuid(),
+      content: content,
+      tags: tags || [], // Array of strings
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime()
+    };
+    
+    memos.unshift(newMemo); // Add to top
+    userProperties.setProperty('memos', JSON.stringify(memos));
+    
+    return { success: true, memo: newMemo };
+  } catch (error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+function updateMemo(id, content, tags) {
+  try {
+    const userProperties = PropertiesService.getUserProperties();
+    const memosJson = userProperties.getProperty('memos');
+    let memos = memosJson ? JSON.parse(memosJson) : [];
+    
+    const index = memos.findIndex(m => m.id === id);
+    if (index === -1) return { success: false, error: 'Memo not found' };
+    
+    memos[index].content = content;
+    if (tags) memos[index].tags = tags;
+    memos[index].updatedAt = new Date().getTime();
+    
+    userProperties.setProperty('memos', JSON.stringify(memos));
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+function deleteMemo(id) {
+  try {
+    const userProperties = PropertiesService.getUserProperties();
+    const memosJson = userProperties.getProperty('memos');
+    let memos = memosJson ? JSON.parse(memosJson) : [];
+    
+    memos = memos.filter(m => m.id !== id);
+    userProperties.setProperty('memos', JSON.stringify(memos));
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+// --- Fixed Link Functions ---
+
+function getFixedLinks() {
+  try {
+    const userProperties = PropertiesService.getUserProperties();
+    const linksJson = userProperties.getProperty('fixedLinks');
+    
+    if (!linksJson) {
+      // Return defaults if not set
+      const defaultLinks = [
+        { id: 'gmail', name: 'Gmail', url: 'https://mail.google.com', icon: 'email', color: 'linear-gradient(135deg, #F093FB 0%, #F5576C 100%)' },
+        { id: 'chat', name: 'Chat', url: 'https://chat.google.com', icon: 'chat', color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
+        { id: 'calendar', name: 'Calendar', url: 'https://calendar.google.com', icon: 'event', color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' },
+        { id: 'drive', name: 'Drive', url: 'https://drive.google.com', icon: 'cloud', color: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)' },
+        { id: 'salesforce', name: 'Salesforce', url: 'https://sunbit.my.salesforce.com', icon: 'cloud', color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
+        { id: 'gemini', name: 'Gemini', url: 'https://gemini.google.com', icon: 'psychology', color: 'linear-gradient(135deg, #8E54E9 0%, #4776E6 100%)' },
+        { id: 'genspark', name: 'Genspark', url: 'https://www.genspark.ai', icon: 'psychology', color: 'linear-gradient(135deg, #8E54E9 0%, #4776E6 100%)' },
+        { id: 'notebooklm', name: 'NotebookLM', url: 'https://notebooklm.google.com', icon: 'psychology', color: 'linear-gradient(135deg, #8E54E9 0%, #4776E6 100%)' },
+        { id: 'workspace_studio', name: 'Workspace Studio', url: 'https://studio.google.com', icon: 'build', color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+        { id: 'redmine', name: 'Redmine', url: '#', icon: 'list', color: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)' }
+      ];
+      return { success: true, links: defaultLinks };
+    }
+    
+    return { success: true, links: JSON.parse(linksJson) };
+  } catch (error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+function saveFixedLinks(links) {
+  try {
+    const userProperties = PropertiesService.getUserProperties();
+    userProperties.setProperty('fixedLinks', JSON.stringify(links));
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.toString() };
   }
 }
