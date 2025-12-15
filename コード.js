@@ -217,6 +217,8 @@ function getEmailThread(threadId) {
         if (isPlainText && body.trim()) {
           // Plain text email - escape special characters and convert line breaks
           body = body.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          // Convert URLs to clickable links
+          body = body.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank">$1</a>');
           body = body.replace(/\n/g, '<br>');
         }
       } catch (bodyError) {
@@ -225,6 +227,8 @@ function getEmailThread(threadId) {
           body = message.getPlainBody();
           // Escape and convert plain text to HTML
           body = body.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          // Convert URLs to clickable links
+          body = body.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank">$1</a>');
           body = body.replace(/\n/g, '<br>');
         } catch (plainError) {
           body = '<p>本文を取得できませんでした</p>';

@@ -4067,6 +4067,34 @@
                     this.style.display = 'none';
                   };
                 });
+
+                // メール本文内のリンクをクリック可能にする
+                const links = emailBody.querySelectorAll('a');
+                links.forEach(function(link) {
+                  const href = link.getAttribute('href');
+                  if (href) {
+                    link.style.cursor = 'pointer';
+                    link.style.color = '#1a73e8';
+                    link.style.textDecoration = 'underline';
+
+                    if (href.startsWith('http')) {
+                      // 外部リンク
+                      link.setAttribute('target', '_blank');
+                      link.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.open(href, '_blank');
+                      };
+                    } else if (href.startsWith('mailto:')) {
+                      // メールリンク
+                      link.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.open(href);
+                      };
+                    }
+                  }
+                });
               }
             });
           }
