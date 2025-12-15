@@ -146,35 +146,98 @@ function getEmailThread(threadId) {
   try {
     const thread = GmailApp.getThreadById(threadId);
     const messages = thread.getMessages();
-    
+
     const emailMessages = messages.map(function(message) {
-      const allAttachments = message.getAttachments();
+      let allAttachments = [];
+      try {
+        allAttachments = message.getAttachments();
+      } catch (attachError) {
+        Logger.log('Error getting attachments: ' + attachError.toString());
+      }
+
       const attachments = [];
       const inlineImages = {};
 
       allAttachments.forEach(function(attachment) {
-        if (attachment.isInlineImage()) {
-          const cid = attachment.getCid();
-          if (cid) {
-            const data = Utilities.base64Encode(attachment.getBytes());
-            inlineImages[cid] = 'data:' + attachment.getContentType() + ';base64,' + data;
+        try {
+          const contentType = attachment.getContentType() || '';
+          const isImage = contentType.indexOf('image/') === 0;
+          const name = attachment.getName() || '';
+
+          // Check if it's an inline image
+          let cid = null;
+          try {
+            cid = attachment.getCid();
+          } catch (cidError) {
+            // getCid() might throw an error for some attachments
           }
-        } else {
-          attachments.push({
-            name: attachment.getName(),
-            size: attachment.getSize(),
-            contentType: attachment.getContentType()
-          });
+
+          const isInline = attachment.isInlineImage() || (isImage && cid);
+
+          if (isInline && isImage) {
+            // Limit inline image size to prevent memory issues (5MB max)
+            const size = attachment.getSize();
+            if (size < 5 * 1024 * 1024) {
+              const data = Utilities.base64Encode(attachment.getBytes());
+              const dataUri = 'data:' + contentType + ';base64,' + data;
+
+              if (cid) {
+                // Store with original CID
+                inlineImages[cid] = dataUri;
+                // Also store without angle brackets if CID has them
+                const cleanCid = cid.replace(/^<|>$/g, '');
+                if (cleanCid !== cid) {
+                  inlineImages[cleanCid] = dataUri;
+                }
+              }
+
+              // Also try to map by filename for some email clients
+              if (name) {
+                inlineImages[name] = dataUri;
+              }
+            }
+          } else if (!isInline || !isImage) {
+            attachments.push({
+              name: name || 'attachment',
+              size: attachment.getSize() || 0,
+              contentType: contentType
+            });
+          }
+        } catch (attError) {
+          Logger.log('Error processing attachment: ' + attError.toString());
+          // Continue processing other attachments
         }
       });
-      
-      let body = message.getBody();
+
+      let body = '';
+      try {
+        body = message.getBody();
+      } catch (bodyError) {
+        Logger.log('Error getting HTML body: ' + bodyError.toString());
+        try {
+          body = message.getPlainBody();
+          // Escape and convert plain text to HTML
+          body = body.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          body = '<pre>' + body + '</pre>';
+        } catch (plainError) {
+          body = '<p>本文を取得できませんでした</p>';
+        }
+      }
 
       // Replace CID references with base64 data URIs for inline images
       for (const cid in inlineImages) {
-        // Use a more robust regex to handle various HTML contexts for cid:
-        // This will target src="cid:..." and potentially background="cid:..."
-        body = body.replace(new RegExp(`cid:${cid}`, 'g'), inlineImages[cid]);
+        try {
+          // Escape special regex characters in CID
+          const escapedCid = cid.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          // Handle various formats: cid:xxx, CID:xxx, cid:<xxx>, etc.
+          body = body.replace(new RegExp('cid:' + escapedCid, 'gi'), inlineImages[cid]);
+          // Also handle with angle brackets
+          body = body.replace(new RegExp('cid:<' + escapedCid + '>', 'gi'), inlineImages[cid]);
+          // Handle src attribute with filename directly (some clients)
+          body = body.replace(new RegExp('src=["\']' + escapedCid + '["\']', 'gi'), 'src="' + inlineImages[cid] + '"');
+        } catch (replaceError) {
+          Logger.log('Error replacing CID: ' + replaceError.toString());
+        }
       }
       
       let fromDisplay = message.getFrom();
