@@ -148,13 +148,34 @@ function getEmailThread(threadId) {
     const messages = thread.getMessages();
     
     const emailMessages = messages.map(function(message) {
-      const attachments = message.getAttachments().map(function(attachment) {
-        return {
-          name: attachment.getName(),
-          size: attachment.getSize(),
-          contentType: attachment.getContentType()
-        };
+      const allAttachments = message.getAttachments();
+      const attachments = [];
+      const inlineImages = {};
+
+      allAttachments.forEach(function(attachment) {
+        if (attachment.isInlineImage()) {
+          const cid = attachment.getCid();
+          if (cid) {
+            const data = Utilities.base64Encode(attachment.getBytes());
+            inlineImages[cid] = 'data:' + attachment.getContentType() + ';base64,' + data;
+          }
+        } else {
+          attachments.push({
+            name: attachment.getName(),
+            size: attachment.getSize(),
+            contentType: attachment.getContentType()
+          });
+        }
       });
+      
+      let body = message.getBody();
+
+      // Replace CID references with base64 data URIs for inline images
+      for (const cid in inlineImages) {
+        // Use a more robust regex to handle various HTML contexts for cid:
+        // This will target src="cid:..." and potentially background="cid:..."
+        body = body.replace(new RegExp(`cid:${cid}`, 'g'), inlineImages[cid]);
+      }
       
       let fromDisplay = message.getFrom();
       const fromMatch = fromDisplay.match(/^"?([^"<]+)"?\s*<([^>]+)>$/);
@@ -194,7 +215,7 @@ function getEmailThread(threadId) {
         replyTo: replyTo,
         subject: message.getSubject(),
         date: message.getDate().getTime(),
-        body: message.getPlainBody(),
+        body: body, // Use the modified body with inline images
         isUnread: message.isUnread(),
         messageId: message.getId(),
         attachments: attachments
