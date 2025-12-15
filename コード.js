@@ -212,13 +212,20 @@ function getEmailThread(threadId) {
       let body = '';
       try {
         body = message.getBody();
+        // Check if body is plain text (no significant HTML structure)
+        const isPlainText = !/<(html|body|div|p|span|table|br)\b/i.test(body);
+        if (isPlainText && body.trim()) {
+          // Plain text email - escape special characters and convert line breaks
+          body = body.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          body = body.replace(/\n/g, '<br>');
+        }
       } catch (bodyError) {
         Logger.log('Error getting HTML body: ' + bodyError.toString());
         try {
           body = message.getPlainBody();
           // Escape and convert plain text to HTML
           body = body.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-          body = '<pre>' + body + '</pre>';
+          body = body.replace(/\n/g, '<br>');
         } catch (plainError) {
           body = '<p>本文を取得できませんでした</p>';
         }
