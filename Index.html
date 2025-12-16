@@ -6262,7 +6262,8 @@
     currentWeekStart = getWeekStart(new Date());
     currentDayDate = new Date();
 
-    loadMonthEvents();
+    // デフォルトの週表示を適用
+    setCalendarView(calendarView);
     calendarRefreshInterval = setInterval(function() {
       refreshCalendarView();
     }, 60000);
