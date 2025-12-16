@@ -2589,6 +2589,78 @@
       gap: 15px;
     }
 
+    /* Event Color Selector */
+    .event-color-selector {
+      position: relative;
+      width: 100%;
+    }
+
+    .event-color-preview {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border: 2px solid rgba(232, 234, 246, 0.2);
+      border-radius: 8px;
+      background: rgba(15, 32, 39, 0.6);
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
+
+    .event-color-preview:hover {
+      border-color: rgba(232, 234, 246, 0.4);
+    }
+
+    .event-color-preview .color-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .event-color-preview .color-name {
+      flex-grow: 1;
+      color: #e8eaf6;
+      font-size: 14px;
+    }
+
+    .event-color-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 4px;
+      background: rgba(30, 50, 60, 0.98);
+      border: 2px solid rgba(232, 234, 246, 0.2);
+      border-radius: 8px;
+      max-height: 250px;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .event-color-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      color: #e8eaf6;
+      font-size: 14px;
+    }
+
+    .event-color-option:hover {
+      background: rgba(102, 126, 234, 0.2);
+    }
+
+    .event-color-option .color-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
     .form-checkbox-group {
       display: flex;
       align-items: center;
@@ -3168,8 +3240,8 @@
               </button>
             </div>
             <div class="calendar-view-toggle">
-              <button class="view-btn active" id="viewMonthBtn" onclick="setCalendarView('month')">月</button>
-              <button class="view-btn" id="viewWeekBtn" onclick="setCalendarView('week')">週</button>
+              <button class="view-btn" id="viewMonthBtn" onclick="setCalendarView('month')">月</button>
+              <button class="view-btn active" id="viewWeekBtn" onclick="setCalendarView('week')">週</button>
               <button class="view-btn" id="viewDayBtn" onclick="setCalendarView('day')">日</button>
             </div>
           </div>
@@ -3331,6 +3403,67 @@
           <div class="form-group" id="recurrenceCountGroup" style="display: none;">
             <label for="eventRecurrenceCount">回数</label>
             <input type="number" id="eventRecurrenceCount" class="form-input" min="1" max="365" value="10" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="eventColorSelect">色</label>
+          <div class="event-color-selector" id="eventColorSelector">
+            <div class="event-color-preview" id="eventColorPreview" onclick="toggleColorDropdown()">
+              <span class="color-dot" id="selectedColorDot" style="background-color: #667eea;"></span>
+              <span class="color-name" id="selectedColorName">デフォルト</span>
+              <span class="material-icons" style="font-size: 18px;">expand_more</span>
+            </div>
+            <div class="event-color-dropdown" id="eventColorDropdown" style="display: none;">
+              <div class="event-color-option" data-color="" data-name="デフォルト" onclick="selectEventColor('', 'デフォルト', '#667eea')">
+                <span class="color-dot" style="background-color: #667eea;"></span>
+                <span>デフォルト</span>
+              </div>
+              <div class="event-color-option" data-color="1" data-name="ラベンダー" onclick="selectEventColor('1', 'ラベンダー', '#7986CB')">
+                <span class="color-dot" style="background-color: #7986CB;"></span>
+                <span>ラベンダー</span>
+              </div>
+              <div class="event-color-option" data-color="2" data-name="セージ" onclick="selectEventColor('2', 'セージ', '#33B679')">
+                <span class="color-dot" style="background-color: #33B679;"></span>
+                <span>セージ</span>
+              </div>
+              <div class="event-color-option" data-color="3" data-name="ブドウ" onclick="selectEventColor('3', 'ブドウ', '#8E24AA')">
+                <span class="color-dot" style="background-color: #8E24AA;"></span>
+                <span>ブドウ</span>
+              </div>
+              <div class="event-color-option" data-color="4" data-name="フラミンゴ" onclick="selectEventColor('4', 'フラミンゴ', '#E67C73')">
+                <span class="color-dot" style="background-color: #E67C73;"></span>
+                <span>フラミンゴ</span>
+              </div>
+              <div class="event-color-option" data-color="5" data-name="バナナ" onclick="selectEventColor('5', 'バナナ', '#F6BF26')">
+                <span class="color-dot" style="background-color: #F6BF26;"></span>
+                <span>バナナ</span>
+              </div>
+              <div class="event-color-option" data-color="6" data-name="ミカン" onclick="selectEventColor('6', 'ミカン', '#F4511E')">
+                <span class="color-dot" style="background-color: #F4511E;"></span>
+                <span>ミカン</span>
+              </div>
+              <div class="event-color-option" data-color="7" data-name="ピーコック" onclick="selectEventColor('7', 'ピーコック', '#039BE5')">
+                <span class="color-dot" style="background-color: #039BE5;"></span>
+                <span>ピーコック</span>
+              </div>
+              <div class="event-color-option" data-color="8" data-name="グラファイト" onclick="selectEventColor('8', 'グラファイト', '#616161')">
+                <span class="color-dot" style="background-color: #616161;"></span>
+                <span>グラファイト</span>
+              </div>
+              <div class="event-color-option" data-color="9" data-name="ブルーベリー" onclick="selectEventColor('9', 'ブルーベリー', '#3F51B5')">
+                <span class="color-dot" style="background-color: #3F51B5;"></span>
+                <span>ブルーベリー</span>
+              </div>
+              <div class="event-color-option" data-color="10" data-name="バジル" onclick="selectEventColor('10', 'バジル', '#0B8043')">
+                <span class="color-dot" style="background-color: #0B8043;"></span>
+                <span>バジル</span>
+              </div>
+              <div class="event-color-option" data-color="11" data-name="トマト" onclick="selectEventColor('11', 'トマト', '#D50000')">
+                <span class="color-dot" style="background-color: #D50000;"></span>
+                <span>トマト</span>
+              </div>
+            </div>
+            <input type="hidden" id="eventColorSelect" value="" />
           </div>
         </div>
         <div class="form-group">
@@ -3675,6 +3808,55 @@
       return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
     }
 
+    // Event Color Selector Functions
+    function toggleColorDropdown() {
+      const dropdown = document.getElementById('eventColorDropdown');
+      if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+
+    function selectEventColor(colorId, colorName, colorHex) {
+      const colorInput = document.getElementById('eventColorSelect');
+      const colorDot = document.getElementById('selectedColorDot');
+      const colorNameEl = document.getElementById('selectedColorName');
+      const dropdown = document.getElementById('eventColorDropdown');
+
+      if (colorInput) colorInput.value = colorId;
+      if (colorDot) colorDot.style.backgroundColor = colorHex;
+      if (colorNameEl) colorNameEl.textContent = colorName;
+      if (dropdown) dropdown.style.display = 'none';
+    }
+
+    function setEventColorByColorId(colorId) {
+      const colorInfo = {
+        '': { name: 'デフォルト', hex: '#667eea' },
+        '1': { name: 'ラベンダー', hex: '#7986CB' },
+        '2': { name: 'セージ', hex: '#33B679' },
+        '3': { name: 'ブドウ', hex: '#8E24AA' },
+        '4': { name: 'フラミンゴ', hex: '#E67C73' },
+        '5': { name: 'バナナ', hex: '#F6BF26' },
+        '6': { name: 'ミカン', hex: '#F4511E' },
+        '7': { name: 'ピーコック', hex: '#039BE5' },
+        '8': { name: 'グラファイト', hex: '#616161' },
+        '9': { name: 'ブルーベリー', hex: '#3F51B5' },
+        '10': { name: 'バジル', hex: '#0B8043' },
+        '11': { name: 'トマト', hex: '#D50000' }
+      };
+
+      const info = colorInfo[colorId] || colorInfo[''];
+      selectEventColor(colorId || '', info.name, info.hex);
+    }
+
+    // Close color dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      const colorSelector = document.getElementById('eventColorSelector');
+      const dropdown = document.getElementById('eventColorDropdown');
+      if (colorSelector && dropdown && !colorSelector.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
+    });
+
     let currentYear = new Date().getFullYear();
     let currentMonth = new Date().getMonth() + 1;
     let eventDatesData = {};
@@ -3699,7 +3881,7 @@
     let todayEventsData = [];
     let nextEventData = null;
     let chatRefreshInterval = null;
-    let calendarView = 'month'; // 'month', 'week', 'day'
+    let calendarView = 'week'; // 'month', 'week', 'day'
     let currentWeekStart = null;
     let currentDayDate = null;
     let weekEventsData = {};
@@ -6504,6 +6686,9 @@
         if (endInput) endInput.value = formatDateTimeLocal(endDate);
       }
 
+      // 色の設定
+      setEventColorByColorId(event.colorId || '');
+
       const deleteBtn = document.getElementById('deleteEventBtn');
       if (deleteBtn) deleteBtn.style.display = 'flex';
 
@@ -6577,6 +6762,9 @@
       // 繰り返し設定をリセット
       resetRecurrenceForm();
 
+      // 色選択をリセット
+      setEventColorByColorId('');
+
       const deleteBtn = document.getElementById('deleteEventBtn');
       if (deleteBtn) deleteBtn.style.display = 'none';
 
@@ -6584,19 +6772,19 @@
         const now = new Date();
         const roundedHour = Math.ceil(now.getHours());
         const roundedMinutes = now.getMinutes() > 30 ? '30' : '00';
-        
+
         let startHour = roundedHour;
         let startMinutes = roundedMinutes;
-        
+
         if (roundedMinutes === '30') {
           startMinutes = '30';
         } else if (now.getMinutes() > 0) {
           startHour = (roundedHour + 1) % 24;
           startMinutes = '00';
         }
-        
+
         const startTime = String(startHour).padStart(2, '0') + ':' + startMinutes;
-        
+
         let endHour = startHour;
         let endMinutes = parseInt(startMinutes) + 30;
         if (endMinutes >= 60) {
@@ -6679,25 +6867,28 @@
       // 繰り返し設定をリセット
       resetRecurrenceForm();
 
+      // 色選択をリセット
+      setEventColorByColorId('');
+
       const deleteBtn = document.getElementById('deleteEventBtn');
       if (deleteBtn) deleteBtn.style.display = 'none';
 
       const now = new Date();
       const roundedHour = Math.ceil(now.getHours());
       const roundedMinutes = now.getMinutes() > 30 ? '30' : '00';
-      
+
       let startHour = roundedHour;
       let startMinutes = roundedMinutes;
-      
+
       if (roundedMinutes === '30') {
         startMinutes = '30';
       } else if (now.getMinutes() > 0) {
         startHour = (roundedHour + 1) % 24;
         startMinutes = '00';
       }
-      
+
       const startTime = String(startHour).padStart(2, '0') + ':' + startMinutes;
-      
+
       let endHour = startHour;
       let endMinutes = parseInt(startMinutes) + 30;
       if (endMinutes >= 60) {
@@ -6955,6 +7146,9 @@
             resetRecurrenceForm();
           }
 
+          // 色の設定
+          setEventColorByColorId(event.colorId || '');
+
           const deleteBtn = document.getElementById('deleteEventBtn');
           if (deleteBtn) deleteBtn.style.display = 'flex';
 
@@ -6969,12 +7163,14 @@
       const locationInput = document.getElementById('eventLocationInput');
       const descriptionInput = document.getElementById('eventDescriptionInput');
       const allDayCheckbox = document.getElementById('eventAllDayCheckbox');
+      const colorSelect = document.getElementById('eventColorSelect');
 
       const title = titleInput ? titleInput.value.trim() : '';
       const location = locationInput ? locationInput.value.trim() : '';
       const description = descriptionInput ? descriptionInput.value.trim() : '';
       const isAllDay = allDayCheckbox ? allDayCheckbox.checked : false;
       const recurrenceRule = buildRecurrenceRule();
+      const colorId = colorSelect ? colorSelect.value : '';
 
       let startTime, endTime;
 
@@ -7025,7 +7221,7 @@
           .withFailureHandler(function(error) {
             alert('予定の更新に失敗しました');
           })
-          .updateCalendarEvent(editingEventId, editingEventCalendarId, title, startTime, endTime, description, location, isAllDay, recurrenceRule);
+          .updateCalendarEvent(editingEventId, editingEventCalendarId, title, startTime, endTime, description, location, isAllDay, recurrenceRule, colorId);
       } else {
         google.script.run
           .withSuccessHandler(function(result) {
@@ -7039,7 +7235,7 @@
           .withFailureHandler(function(error) {
             alert('予定の追加に失敗しました');
           })
-          .addCalendarEvent(title, startTime, endTime, description, location, recurrenceRule);
+          .addCalendarEvent(title, startTime, endTime, description, location, recurrenceRule, colorId);
       }
     }
 

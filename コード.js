@@ -718,7 +718,8 @@ function getCalendarEvents(dateStr) {
                 conferenceLink: conferenceLink,
                 conferenceType: conferenceType,
                 canEdit: calendar.canEdit,
-                isTodo: false
+                isTodo: false,
+                colorId: event.colorId || ''
               });
             });
             
@@ -747,6 +748,7 @@ function getCalendarEvents(dateStr) {
               conferenceType = 'zoom';
             }
 
+            // CalendarApp からはcolorIdを直接取得できないため空にする
             allEvents.push({
               id: event.getId(),
               title: event.getTitle(),
@@ -762,7 +764,8 @@ function getCalendarEvents(dateStr) {
               conferenceLink: conferenceLink,
               conferenceType: conferenceType,
               canEdit: calendar.canEdit,
-              isTodo: false
+              isTodo: false,
+              colorId: ''
             });
           });
         }
@@ -835,44 +838,38 @@ function getCalendarEvents(dateStr) {
   }
 }
 
-function addCalendarEvent(title, startTime, endTime, description, location, recurrenceRule) {
+function addCalendarEvent(title, startTime, endTime, description, location, recurrenceRule, colorId) {
   try {
     const start = new Date(startTime);
     const end = new Date(endTime);
     const tz = Session.getScriptTimeZone() || 'Asia/Tokyo';
+    const calendarId = CalendarApp.getDefaultCalendar().getId();
 
-    // 繰り返しルールがある場合はCalendar APIを使用
+    // Calendar APIを使用して作成（colorIdや繰り返しルールに対応）
+    const body = {
+      summary: title,
+      description: description || '',
+      location: location || '',
+      start: { dateTime: start.toISOString(), timeZone: tz },
+      end: { dateTime: end.toISOString(), timeZone: tz }
+    };
+
+    // 繰り返しルールがある場合
     if (recurrenceRule) {
-      const calendarId = CalendarApp.getDefaultCalendar().getId();
-      const body = {
-        summary: title,
-        description: description || '',
-        location: location || '',
-        start: { dateTime: start.toISOString(), timeZone: tz },
-        end: { dateTime: end.toISOString(), timeZone: tz },
-        recurrence: [recurrenceRule]
-      };
-
-      const createdEvent = Calendar.Events.insert(body, calendarId);
-
-      return {
-        success: true,
-        message: '繰り返し予定を追加しました',
-        eventId: createdEvent.id
-      };
+      body.recurrence = [recurrenceRule];
     }
 
-    // 繰り返しなしの場合は従来のCalendarAppを使用
-    const calendar = CalendarApp.getDefaultCalendar();
-    const event = calendar.createEvent(title, start, end, {
-      description: description || '',
-      location: location || ''
-    });
+    // 色の設定（1-11のcolorId）
+    if (colorId && colorId !== '') {
+      body.colorId = colorId;
+    }
+
+    const createdEvent = Calendar.Events.insert(body, calendarId);
 
     return {
       success: true,
-      message: '予定を追加しました',
-      eventId: event.getId()
+      message: recurrenceRule ? '繰り返し予定を追加しました' : '予定を追加しました',
+      eventId: createdEvent.id
     };
   } catch (error) {
     Logger.log('Error adding calendar event: ' + error.toString());
@@ -883,7 +880,7 @@ function addCalendarEvent(title, startTime, endTime, description, location, recu
   }
 }
 
-function updateCalendarEvent(eventId, calendarId, title, startTime, endTime, description, location, isAllDay, recurrenceRule) {
+function updateCalendarEvent(eventId, calendarId, title, startTime, endTime, description, location, isAllDay, recurrenceRule, colorId) {
   try {
     // Prefer Calendar API when calendarId is provided
     if (calendarId) {
@@ -917,6 +914,16 @@ function updateCalendarEvent(eventId, calendarId, title, startTime, endTime, des
         } else if (isRecurringInstance || (currentEvent.recurrence && currentEvent.recurrence.length > 0)) {
           // 繰り返しを解除する場合は空配列
           body.recurrence = [];
+        }
+
+        // 色の設定（1-11のcolorId、空文字の場合は色をリセット）
+        if (colorId !== undefined) {
+          if (colorId && colorId !== '') {
+            body.colorId = colorId;
+          } else {
+            // 色をリセットする場合はnullを設定
+            body.colorId = null;
+          }
         }
 
         // 繰り返し予定のインスタンスの場合は元のイベントを更新
