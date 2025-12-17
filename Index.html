@@ -5965,6 +5965,19 @@
       }
     }
 
+    function scrollCurrentTimeIntoView(container) {
+      if (!container) return;
+
+      const indicator = container.querySelector('.current-time-indicator');
+      if (!indicator) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const indicatorRect = indicator.getBoundingClientRect();
+      const targetTop = indicatorRect.top - containerRect.top + container.scrollTop - (container.clientHeight / 3);
+
+      container.scrollTop = targetTop < 0 ? 0 : targetTop;
+    }
+
     function renderWeekView() {
       const weekView = document.getElementById('calendarWeekView');
       const monthElement = document.getElementById('calendarMonth');
@@ -6136,6 +6149,7 @@
       html += '</div>';
 
       weekView.innerHTML = html;
+      scrollCurrentTimeIntoView(weekView);
     }
 
     function renderDayView() {
@@ -6256,6 +6270,7 @@
       }
 
       dayView.innerHTML = html;
+      scrollCurrentTimeIntoView(dayView);
     }
 
     // 初期化
