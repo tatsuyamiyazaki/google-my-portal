@@ -3302,10 +3302,10 @@
           <div class="memo-header">
             <h2 style="margin-bottom: 0;"><span class="material-icons">note</span>メモ</h2>
             <div class="memo-controls">
-              <button class="memo-view-btn active" id="memoListViewBtn" onclick="setMemoView('list')" title="一覧表示">
+              <button class="memo-view-btn" id="memoListViewBtn" onclick="setMemoView('list')" title="一覧表示">
                 <span class="material-icons">view_list</span>
               </button>
-              <button class="memo-view-btn" id="memoCardViewBtn" onclick="setMemoView('card')" title="カード表示">
+              <button class="memo-view-btn active" id="memoCardViewBtn" onclick="setMemoView('card')" title="カード表示">
                 <span class="material-icons">grid_view</span>
               </button>
               <button class="add-memo-btn" onclick="openMemoModal()">
@@ -3314,7 +3314,7 @@
             </div>
           </div>
           <div class="memo-tag-filter" id="memoTagFilter"></div>
-          <div id="memoList" class="memo-list-view">
+          <div id="memoList" class="memo-card-view">
             <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
           </div>
         </div>
@@ -3881,6 +3881,7 @@
     let todayEventsData = [];
     let nextEventData = null;
     let chatRefreshInterval = null;
+    let taskRefreshInterval = null;
     let calendarView = 'week'; // 'month', 'week', 'day'
     let currentWeekStart = null;
     let currentDayDate = null;
@@ -4012,6 +4013,64 @@
       showEventDetail(nextEventData);
     }
 
+    const refreshIntervalDefaults = {
+      emailRefreshInterval: 30000,
+      chatRefreshInterval: 30000,
+      calendarRefreshInterval: 60000,
+      taskRefreshINterval: 60000
+    };
+
+    function normalizeRefreshIntervals(intervals) {
+      const normalize = function(value, fallback) {
+        const num = Number(value);
+        return Number.isFinite(num) && num > 0 ? Math.floor(num) : fallback;
+      };
+
+      const source = intervals || {};
+      return {
+        emailRefreshInterval: normalize(source.emailRefreshInterval, refreshIntervalDefaults.emailRefreshInterval),
+        chatRefreshInterval: normalize(source.chatRefreshInterval, refreshIntervalDefaults.chatRefreshInterval),
+        calendarRefreshInterval: normalize(source.calendarRefreshInterval, refreshIntervalDefaults.calendarRefreshInterval),
+        taskRefreshINterval: normalize(source.taskRefreshINterval, refreshIntervalDefaults.taskRefreshINterval)
+      };
+    }
+
+    function applyRefreshIntervals(intervals) {
+      const normalized = normalizeRefreshIntervals(intervals);
+
+      if (emailRefreshInterval) clearInterval(emailRefreshInterval);
+      emailRefreshInterval = setInterval(loadGmailData, normalized.emailRefreshInterval);
+
+      if (chatRefreshInterval) clearInterval(chatRefreshInterval);
+      chatRefreshInterval = setInterval(loadChatData, normalized.chatRefreshInterval);
+
+      if (taskRefreshInterval) clearInterval(taskRefreshInterval);
+      taskRefreshInterval = setInterval(loadTodoList, normalized.taskRefreshINterval);
+
+      if (calendarRefreshInterval) clearInterval(calendarRefreshInterval);
+      calendarRefreshInterval = setInterval(function() {
+        refreshCalendarView();
+      }, normalized.calendarRefreshInterval);
+
+      if (summaryRefreshInterval) clearInterval(summaryRefreshInterval);
+      summaryRefreshInterval = setInterval(updateSummaryDashboard, 60000);
+    }
+
+    function initializeRefreshIntervals() {
+      google.script.run
+        .withSuccessHandler(function(data) {
+          if (data && data.success && data.intervals) {
+            applyRefreshIntervals(data.intervals);
+          } else {
+            applyRefreshIntervals(refreshIntervalDefaults);
+          }
+        })
+        .withFailureHandler(function() {
+          applyRefreshIntervals(refreshIntervalDefaults);
+        })
+        .getRefreshIntervals();
+    }
+
     function loadGmailData() {
       google.script.run
         .withSuccessHandler(function(gmailData) {
@@ -4113,11 +4172,7 @@
     loadGmailData();
     loadChatData(); // Chatデータも読み込む
     updateSummaryDashboard();
-    
-    emailRefreshInterval = setInterval(loadGmailData, 30000);
-    chatRefreshInterval = setInterval(loadChatData, 30000); // Chatデータの定期更新
-    summaryRefreshInterval = setInterval(updateSummaryDashboard, 60000);
-
+    initializeRefreshIntervals();
     function convertLinksToClickable(text) {
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       return text.replace(urlRegex, function(url) {
@@ -5320,7 +5375,7 @@
     // メモ関連
     let editingMemoId = null;
     let allMemos = [];
-    let currentMemoView = 'list';
+    let currentMemoView = 'card';
     let currentMemoTagFilter = null;
 
     function loadMemos() {
@@ -6278,12 +6333,7 @@
     currentDayDate = new Date();
 
     // デフォルトの週表示を適用
-    setCalendarView(calendarView);
-    calendarRefreshInterval = setInterval(function() {
-      refreshCalendarView();
-    }, 60000);
-
-    function showDayEvents(dateStr) {
+    setCalendarView(calendarView);    function showDayEvents(dateStr) {
       currentEventDate = dateStr;
       const modal = document.getElementById('eventModal');
       const modalBody = document.getElementById('eventModalBody');

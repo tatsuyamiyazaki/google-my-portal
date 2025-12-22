@@ -23,6 +23,34 @@ function getUserInfo() {
   }
 }
 
+
+function getRefreshIntervals() {
+  const scriptProperties = PropertiesService.getScriptProperties();
+  const defaults = {
+    emailRefreshInterval: 30000,
+    chatRefreshInterval: 30000,
+    calendarRefreshInterval: 60000,
+    taskRefreshINterval: 60000
+  };
+
+  const toPositiveInt = function(value, fallback) {
+    const num = Number(value);
+    return Number.isFinite(num) && num > 0 ? Math.floor(num) : fallback;
+  };
+
+  const intervals = {
+    emailRefreshInterval: toPositiveInt(scriptProperties.getProperty('emailRefreshInterval'), defaults.emailRefreshInterval),
+    chatRefreshInterval: toPositiveInt(scriptProperties.getProperty('chatRefreshInterval'), defaults.chatRefreshInterval),
+    calendarRefreshInterval: toPositiveInt(scriptProperties.getProperty('calendarRefreshInterval'), defaults.calendarRefreshInterval),
+    taskRefreshINterval: toPositiveInt(scriptProperties.getProperty('taskRefreshINterval'), defaults.taskRefreshINterval)
+  };
+
+  return {
+    success: true,
+    intervals: intervals
+  };
+}
+
 function getGmailData() {
   try {
     const unreadThreads = GmailApp.search('is:unread in:inbox', 0, 100);
