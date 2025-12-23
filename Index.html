@@ -1147,6 +1147,43 @@
       color: #7986cb;
     }
 
+    .email-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .email-toggle {
+      display: inline-flex;
+      border: 1px solid rgba(176, 176, 176, 0.6);
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(15, 32, 39, 0.35);
+    }
+
+    .email-toggle-btn {
+      background: transparent;
+      color: #b0b0b0;
+      border: none;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .email-toggle-btn.active {
+      background: #667eea;
+      color: #fff;
+    }
+
+    .email-toggle-btn:not(.active):hover {
+      background: rgba(176, 176, 176, 0.15);
+      color: #e8eaf6;
+    }
+
     #emailList {
       flex: 1;
       overflow-y: auto;
@@ -3221,7 +3258,13 @@
 
     <div class="main-content">
       <div class="info-card">
-        <h2><span class="material-icons">inbox</span>未読メール</h2>
+        <div class="email-header-row">
+          <h2><span class="material-icons">inbox</span><span id="emailListTitle">未読メール</span></h2>
+          <div class="email-toggle" role="tablist" aria-label="メール表示切り替え">
+            <button class="email-toggle-btn active" type="button" data-mode="unread" onclick="setEmailListMode('unread')">未読</button>
+            <button class="email-toggle-btn" type="button" data-mode="inbox" onclick="setEmailListMode('inbox')">受信トレイ</button>
+          </div>
+        </div>
         <div id="emailList">
           <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
         </div>
@@ -3887,6 +3930,7 @@
     let currentDayDate = null;
     let weekEventsData = {};
     let dayEventsData = [];
+    let currentEmailListMode = 'unread';
 
     function updateClock() {
       const now = new Date();
@@ -4039,7 +4083,9 @@
       const normalized = normalizeRefreshIntervals(intervals);
 
       if (emailRefreshInterval) clearInterval(emailRefreshInterval);
-      emailRefreshInterval = setInterval(loadGmailData, normalized.emailRefreshInterval);
+      emailRefreshInterval = setInterval(function() {
+        loadGmailData(currentEmailListMode);
+      }, normalized.emailRefreshInterval);
 
       if (chatRefreshInterval) clearInterval(chatRefreshInterval);
       chatRefreshInterval = setInterval(loadChatData, normalized.chatRefreshInterval);
@@ -4071,7 +4117,26 @@
         .getRefreshIntervals();
     }
 
-    function loadGmailData() {
+    function setEmailListMode(mode) {
+      const normalizedMode = mode === 'inbox' ? 'inbox' : 'unread';
+      currentEmailListMode = normalizedMode;
+
+      const titleElement = document.getElementById('emailListTitle');
+      if (titleElement) {
+        titleElement.textContent = normalizedMode === 'inbox' ? '受信トレイ' : '未読メール';
+      }
+
+      const toggleButtons = document.querySelectorAll('.email-toggle-btn');
+      toggleButtons.forEach(function(button) {
+        const isActive = button.getAttribute('data-mode') === normalizedMode;
+        button.classList.toggle('active', isActive);
+      });
+
+      loadGmailData(normalizedMode);
+    }
+
+    function loadGmailData(listMode) {
+      const requestedMode = listMode === 'inbox' ? 'inbox' : 'unread';
       google.script.run
         .withSuccessHandler(function(gmailData) {
           if (!gmailData.success) {
@@ -4105,13 +4170,17 @@
           
           const emailList = document.getElementById('emailList');
           if (!emailList) return;
-          
-          if (gmailData.unreadCount === 0) {
-            emailList.innerHTML = '<div class="no-unread-message"><span class="material-icons">check_circle</span><p>未読メールはありません</p></div>';
+
+          const activeMode = gmailData.listMode === 'inbox' ? 'inbox' : requestedMode;
+          const hasEmails = gmailData.latestEmails && gmailData.latestEmails.length > 0;
+
+          if (!hasEmails) {
+            const emptyText = activeMode === 'inbox' ? '受信トレイにメールがありません' : '未読メールはありません';
+            emailList.innerHTML = '<div class="no-unread-message"><span class="material-icons">check_circle</span><p>' + emptyText + '</p></div>';
             return;
           }
-          
-          if (gmailData.latestEmails && gmailData.latestEmails.length > 0) {
+
+          if (hasEmails) {
             let emailHTML = '<ul class="email-list">';
             
             gmailData.latestEmails.forEach(function(email) {
@@ -4138,10 +4207,10 @@
             emailList.innerHTML = '<p style="text-align: center; color: #E74C3C; padding: 20px;">メールの取得に失敗しました</p>';
           }
         })
-        .getGmailData();
+        .getGmailData(requestedMode);
     }
 
-    loadGmailData();
+    setEmailListMode(currentEmailListMode);
     updateSummaryDashboard();
 
     function loadChatData() {
@@ -4169,7 +4238,7 @@
         .getChatData();
     }
 
-    loadGmailData();
+    loadGmailData(currentEmailListMode);
     loadChatData(); // Chatデータも読み込む
     updateSummaryDashboard();
     initializeRefreshIntervals();
@@ -4201,7 +4270,7 @@
       
       google.script.run
         .withSuccessHandler(function() {
-          loadGmailData();
+          loadGmailData(currentEmailListMode);
         })
         .markThreadAsRead(threadId);
       
@@ -4437,12 +4506,12 @@
         .withSuccessHandler(function(result) {
             if(result.success) {
                 document.getElementById('emailModal').style.display = 'none';
-                loadGmailData(); 
+                loadGmailData(currentEmailListMode); 
                 updateSummaryDashboard(); 
             } else {
                 alert('削除に失敗しました: ' + result.error);
                 document.getElementById('emailModal').style.display = 'none';
-                loadGmailData();
+                loadGmailData(currentEmailListMode);
             }
         })
         .withFailureHandler(function(error) {
@@ -4462,12 +4531,12 @@
         .withSuccessHandler(function(result) {
             if(result.success) {
                 document.getElementById('emailModal').style.display = 'none';
-                loadGmailData(); 
+                loadGmailData(currentEmailListMode); 
                 updateSummaryDashboard(); 
             } else {
                 alert('アーカイブに失敗しました: ' + result.error);
                 document.getElementById('emailModal').style.display = 'none';
-                loadGmailData();
+                loadGmailData(currentEmailListMode);
             }
         })
         .withFailureHandler(function(error) {

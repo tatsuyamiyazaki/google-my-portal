@@ -51,14 +51,17 @@ function getRefreshIntervals() {
   };
 }
 
-function getGmailData() {
+function getGmailData(listMode) {
   try {
     const unreadThreads = GmailApp.search('is:unread in:inbox', 0, 100);
     const unreadCount = unreadThreads.length;
+    const normalizedMode = listMode === 'inbox' ? 'inbox' : 'unread';
+    const listQuery = normalizedMode === 'inbox' ? 'in:inbox' : 'is:unread in:inbox';
+    const listThreads = GmailApp.search(listQuery, 0, 100);
     let latestEmails = [];
     
-    if (unreadCount > 0) {
-      const threadsToShow = unreadThreads.slice(0, 100);
+    if (listThreads.length > 0) {
+      const threadsToShow = listThreads.slice(0, 100);
       
       for (let i = 0; i < threadsToShow.length; i++) {
         const thread = threadsToShow[i];
@@ -92,7 +95,7 @@ function getGmailData() {
           from: fromName,
           date: latestMessage.getDate().getTime(),
           snippet: snippet,
-          isUnread: true,
+          isUnread: normalizedMode === 'unread' ? true : thread.isUnread(),
           messageCount: messages.length,
           threadId: thread.getId()
         });
@@ -103,7 +106,7 @@ function getGmailData() {
       success: true,
       unreadCount: unreadCount,
       latestEmails: latestEmails,
-      showingUnreadOnly: unreadCount > 0
+      listMode: normalizedMode
     };
     
   } catch (error) {
@@ -112,7 +115,7 @@ function getGmailData() {
       success: false,
       unreadCount: 0,
       latestEmails: [],
-      showingUnreadOnly: false,
+      listMode: listMode === 'inbox' ? 'inbox' : 'unread',
       error: error.toString()
     };
   }
