@@ -1830,3 +1830,54 @@ function saveFixedLinks(links) {
     return { success: false, error: error.toString() };
   }
 }
+
+// --- Department Metrics Functions ---
+
+function getDefaultDepartmentMetrics_() {
+  return {
+    E1: { sales: '', margin: '', hourly: '' },
+    E2: { sales: '', margin: '', hourly: '' },
+    EB: { sales: '', margin: '', hourly: '' }
+  };
+}
+
+function normalizeDepartmentMetrics_(metrics) {
+  const defaults = getDefaultDepartmentMetrics_();
+  if (!metrics || typeof metrics !== 'object') return defaults;
+
+  ['E1', 'E2', 'EB'].forEach(function(deptId) {
+    const source = metrics[deptId] || {};
+    ['sales', 'margin', 'hourly'].forEach(function(key) {
+      if (source[key] !== undefined && source[key] !== null) {
+        defaults[deptId][key] = String(source[key]).trim();
+      }
+    });
+  });
+
+  return defaults;
+}
+
+function getDepartmentMetrics() {
+  try {
+    const userProperties = PropertiesService.getUserProperties();
+    const metricsJson = userProperties.getProperty('departmentMetrics');
+    const metrics = metricsJson ? JSON.parse(metricsJson) : null;
+    return {
+      success: true,
+      metrics: normalizeDepartmentMetrics_(metrics)
+    };
+  } catch (error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+function saveDepartmentMetrics(metrics) {
+  try {
+    const userProperties = PropertiesService.getUserProperties();
+    const normalized = normalizeDepartmentMetrics_(metrics || {});
+    userProperties.setProperty('departmentMetrics', JSON.stringify(normalized));
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.toString() };
+  }
+}

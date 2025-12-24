@@ -313,11 +313,11 @@
     .summary-dashboard {
       background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
       border-radius: 12px;
-      padding: 10px 15px;
+      padding: 12px 15px;
       margin-bottom: 8px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
+      gap: 12px;
       border: 1px solid rgba(102, 126, 234, 0.2);
       box-shadow: 0 4px 20px rgba(102, 126, 234, 0.1);
     }
@@ -326,7 +326,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 8px 10px;
+      padding: 12px 14px;
       background: rgba(15, 32, 39, 0.6);
       border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -399,6 +399,73 @@
       font-size: 10px;
       color: #7986cb;
       margin-top: 2px;
+    }
+
+    .summary-item.metrics {
+      align-items: flex-start;
+    }
+
+    .summary-icon.dept {
+      background: rgba(102, 126, 234, 0.2);
+      color: #e8eaf6;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      width: 42px;
+      height: 42px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .metrics-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+
+    .metrics-label {
+      color: #9fa8da;
+      font-weight: 600;
+    }
+
+    .metrics-value {
+      color: #e8eaf6;
+      font-weight: 700;
+      text-align: right;
+      min-width: 90px;
+      font-size: 16px;
+    }
+
+    .metrics-settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .department-metrics-card {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(232, 234, 246, 0.2);
+      background: rgba(15, 32, 39, 0.6);
+    }
+
+    .department-metrics-card h5 {
+      margin: 0 0 8px;
+      font-size: 12px;
+      color: #e8eaf6;
+      letter-spacing: 0.5px;
+    }
+
+    .settings-status {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #9fa8da;
     }
 
     .main-content {
@@ -3224,34 +3291,66 @@
     </header>
 
     <div class="summary-dashboard">
-      <div class="summary-item">
-        <div class="summary-icon email">📧</div>
+      <div class="summary-item metrics">
+        <div class="summary-icon dept">E1</div>
         <div class="summary-content">
-          <div class="summary-label">未読メール</div>
-          <div class="summary-value" id="summaryUnreadCount">
-            <span>0</span>
-            <span style="font-size: 14px; font-weight: 500;">件</span>
+          <div class="summary-label">E1</div>
+          <div class="metrics-grid">
+            <div class="metrics-row">
+              <span class="metrics-label">売上</span>
+              <span class="metrics-value" id="metricE1Sales">-</span>
+            </div>
+            <div class="metrics-row">
+              <span class="metrics-label">限界利益</span>
+              <span class="metrics-value" id="metricE1Margin">-</span>
+            </div>
+            <div class="metrics-row">
+              <span class="metrics-label">時間当たり採算</span>
+              <span class="metrics-value" id="metricE1Hourly">-</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="summary-item clickable" id="todayEventSummary" onclick="showTodayEvents()">
-        <div class="summary-icon event">📅</div>
+      <div class="summary-item metrics">
+        <div class="summary-icon dept">E2</div>
         <div class="summary-content">
-          <div class="summary-label">本日の予定</div>
-          <div class="summary-value" id="summaryEventCount">
-            <span>0</span>
-            <span style="font-size: 14px; font-weight: 500;">件</span>
+          <div class="summary-label">E2</div>
+          <div class="metrics-grid">
+            <div class="metrics-row">
+              <span class="metrics-label">売上</span>
+              <span class="metrics-value" id="metricE2Sales">-</span>
+            </div>
+            <div class="metrics-row">
+              <span class="metrics-label">限界利益</span>
+              <span class="metrics-value" id="metricE2Margin">-</span>
+            </div>
+            <div class="metrics-row">
+              <span class="metrics-label">時間当たり採算</span>
+              <span class="metrics-value" id="metricE2Hourly">-</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="summary-item clickable" id="nextEventSummary" onclick="showNextEventDetail()">
-        <div class="summary-icon next">⏰</div>
+      <div class="summary-item metrics">
+        <div class="summary-icon dept">EB</div>
         <div class="summary-content">
-          <div class="summary-label">次の予定</div>
-          <div class="summary-value" id="summaryNextEvent" style="font-size: 16px;">予定なし</div>
-          <div class="summary-subtext" id="summaryNextEventTime"></div>
+          <div class="summary-label">EB</div>
+          <div class="metrics-grid">
+            <div class="metrics-row">
+              <span class="metrics-label">売上</span>
+              <span class="metrics-value" id="metricEBSales">-</span>
+            </div>
+            <div class="metrics-row">
+              <span class="metrics-label">限界利益</span>
+              <span class="metrics-value" id="metricEBMargin">-</span>
+            </div>
+            <div class="metrics-row">
+              <span class="metrics-label">時間当たり採算</span>
+              <span class="metrics-value" id="metricEBHourly">-</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -3748,6 +3847,62 @@
             <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
           </div>
         </div>
+        <div class="settings-section">
+          <div class="settings-section-header">
+            <h4><span class="material-icons">insights</span>部門指標</h4>
+            <button class="btn btn-sm btn-primary" onclick="saveDepartmentMetrics()" id="deptMetricsSaveBtn">
+              <span class="material-icons">save</span>保存
+            </button>
+          </div>
+          <div class="metrics-settings-grid">
+            <div class="department-metrics-card">
+              <h5>E1</h5>
+              <div class="form-group">
+                <label for="deptE1SalesInput">売上</label>
+                <input type="text" id="deptE1SalesInput" class="form-input" placeholder="例: 1200000" />
+              </div>
+              <div class="form-group">
+                <label for="deptE1MarginInput">限界利益</label>
+                <input type="text" id="deptE1MarginInput" class="form-input" placeholder="例: 420000" />
+              </div>
+              <div class="form-group">
+                <label for="deptE1HourlyInput">時間当たり採算</label>
+                <input type="text" id="deptE1HourlyInput" class="form-input" placeholder="例: 18000" />
+              </div>
+            </div>
+            <div class="department-metrics-card">
+              <h5>E2</h5>
+              <div class="form-group">
+                <label for="deptE2SalesInput">売上</label>
+                <input type="text" id="deptE2SalesInput" class="form-input" placeholder="例: 980000" />
+              </div>
+              <div class="form-group">
+                <label for="deptE2MarginInput">限界利益</label>
+                <input type="text" id="deptE2MarginInput" class="form-input" placeholder="例: 320000" />
+              </div>
+              <div class="form-group">
+                <label for="deptE2HourlyInput">時間当たり採算</label>
+                <input type="text" id="deptE2HourlyInput" class="form-input" placeholder="例: 15000" />
+              </div>
+            </div>
+            <div class="department-metrics-card">
+              <h5>EB</h5>
+              <div class="form-group">
+                <label for="deptEBSalesInput">売上</label>
+                <input type="text" id="deptEBSalesInput" class="form-input" placeholder="例: 760000" />
+              </div>
+              <div class="form-group">
+                <label for="deptEBMarginInput">限界利益</label>
+                <input type="text" id="deptEBMarginInput" class="form-input" placeholder="例: 210000" />
+              </div>
+              <div class="form-group">
+                <label for="deptEBHourlyInput">時間当たり採算</label>
+                <input type="text" id="deptEBHourlyInput" class="form-input" placeholder="例: 12000" />
+              </div>
+            </div>
+          </div>
+          <div class="settings-status" id="deptMetricsStatus"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -3948,6 +4103,162 @@
     let weekEventsData = {};
     let dayEventsData = [];
     let currentEmailListMode = 'unread';
+    let departmentMetricsCache = null;
+
+    const departmentIds = ['E1', 'E2', 'EB'];
+    const departmentMetricKeys = ['sales', 'margin', 'hourly'];
+
+    function getDefaultDepartmentMetrics() {
+      return {
+        E1: { sales: '', margin: '', hourly: '' },
+        E2: { sales: '', margin: '', hourly: '' },
+        EB: { sales: '', margin: '', hourly: '' }
+      };
+    }
+
+    function normalizeDepartmentMetrics(metrics) {
+      const defaults = getDefaultDepartmentMetrics();
+      if (!metrics || typeof metrics !== 'object') return defaults;
+
+      departmentIds.forEach(function(deptId) {
+        const source = metrics[deptId] || {};
+        departmentMetricKeys.forEach(function(key) {
+          if (source[key] !== undefined && source[key] !== null) {
+            defaults[deptId][key] = String(source[key]).trim();
+          }
+        });
+      });
+
+      return defaults;
+    }
+
+    function formatMetricValue(value) {
+      const normalized = value === null || value === undefined ? '' : String(value).trim();
+      if (!normalized) return '-';
+
+      const compact = normalized.replace(/[,\s]/g, '');
+      const match = compact.match(/^(-?\d+(?:\.\d+)?)(円)?$/);
+      if (!match) return normalized;
+
+      const numberPart = match[1];
+      const suffix = match[2] || '';
+      const parts = numberPart.split('.');
+      const integerPart = parts[0];
+      const decimalPart = parts[1];
+      const formattedInt = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return decimalPart ? formattedInt + '.' + decimalPart + suffix : formattedInt + suffix;
+    }
+
+    function applyDepartmentMetricsToSummary(metrics) {
+      const normalized = normalizeDepartmentMetrics(metrics);
+      departmentMetricsCache = normalized;
+
+      const setValue = function(id, value) {
+        const element = document.getElementById(id);
+        if (element) element.textContent = formatMetricValue(value);
+      };
+
+      setValue('metricE1Sales', normalized.E1.sales);
+      setValue('metricE1Margin', normalized.E1.margin);
+      setValue('metricE1Hourly', normalized.E1.hourly);
+      setValue('metricE2Sales', normalized.E2.sales);
+      setValue('metricE2Margin', normalized.E2.margin);
+      setValue('metricE2Hourly', normalized.E2.hourly);
+      setValue('metricEBSales', normalized.EB.sales);
+      setValue('metricEBMargin', normalized.EB.margin);
+      setValue('metricEBHourly', normalized.EB.hourly);
+    }
+
+    function setDepartmentMetricsInputs(metrics) {
+      const normalized = normalizeDepartmentMetrics(metrics);
+
+      const setInput = function(id, value) {
+        const element = document.getElementById(id);
+        if (element) element.value = value;
+      };
+
+      setInput('deptE1SalesInput', normalized.E1.sales);
+      setInput('deptE1MarginInput', normalized.E1.margin);
+      setInput('deptE1HourlyInput', normalized.E1.hourly);
+      setInput('deptE2SalesInput', normalized.E2.sales);
+      setInput('deptE2MarginInput', normalized.E2.margin);
+      setInput('deptE2HourlyInput', normalized.E2.hourly);
+      setInput('deptEBSalesInput', normalized.EB.sales);
+      setInput('deptEBMarginInput', normalized.EB.margin);
+      setInput('deptEBHourlyInput', normalized.EB.hourly);
+    }
+
+    function getDepartmentMetricsFromInputs() {
+      const getValue = function(id) {
+        const element = document.getElementById(id);
+        return element ? element.value.trim() : '';
+      };
+
+      return {
+        E1: {
+          sales: getValue('deptE1SalesInput'),
+          margin: getValue('deptE1MarginInput'),
+          hourly: getValue('deptE1HourlyInput')
+        },
+        E2: {
+          sales: getValue('deptE2SalesInput'),
+          margin: getValue('deptE2MarginInput'),
+          hourly: getValue('deptE2HourlyInput')
+        },
+        EB: {
+          sales: getValue('deptEBSalesInput'),
+          margin: getValue('deptEBMarginInput'),
+          hourly: getValue('deptEBHourlyInput')
+        }
+      };
+    }
+
+    function updateDepartmentMetricsStatus(message, isError) {
+      const statusElement = document.getElementById('deptMetricsStatus');
+      if (!statusElement) return;
+      statusElement.textContent = message || '';
+      statusElement.style.color = isError ? '#E74C3C' : '#9fa8da';
+    }
+
+    function loadDepartmentMetricsForSettings() {
+      updateDepartmentMetricsStatus('読み込み中...', false);
+      google.script.run
+        .withSuccessHandler(function(result) {
+          if (result && result.success) {
+            setDepartmentMetricsInputs(result.metrics);
+            updateDepartmentMetricsStatus('', false);
+          } else {
+            updateDepartmentMetricsStatus('取得に失敗しました', true);
+          }
+        })
+        .withFailureHandler(function() {
+          updateDepartmentMetricsStatus('取得に失敗しました', true);
+        })
+        .getDepartmentMetrics();
+    }
+
+    function saveDepartmentMetrics() {
+      const button = document.getElementById('deptMetricsSaveBtn');
+      if (button) button.disabled = true;
+      updateDepartmentMetricsStatus('保存中...', false);
+
+      const metrics = getDepartmentMetricsFromInputs();
+      google.script.run
+        .withSuccessHandler(function(result) {
+          if (result && result.success) {
+            applyDepartmentMetricsToSummary(metrics);
+            updateDepartmentMetricsStatus('保存しました', false);
+          } else {
+            updateDepartmentMetricsStatus('保存に失敗しました', true);
+          }
+          if (button) button.disabled = false;
+        })
+        .withFailureHandler(function() {
+          updateDepartmentMetricsStatus('保存に失敗しました', true);
+          if (button) button.disabled = false;
+        })
+        .saveDepartmentMetrics(metrics);
+    }
 
     function updateClock() {
       const now = new Date();
@@ -3991,71 +4302,18 @@
       .getUserInfo();
 
     function updateSummaryDashboard() {
-      const today = new Date();
-      const dateStr = today.getFullYear() + '-' + 
-                     String(today.getMonth() + 1).padStart(2, '0') + '-' + 
-                     String(today.getDate()).padStart(2, '0');
-      
       google.script.run
-        .withSuccessHandler(function(data) {
-          if (data.success && data.events) {
-            todayEventsData = data.events;
-            const countElement = document.getElementById('summaryEventCount');
-            if (countElement && countElement.querySelector) {
-              const spanElement = countElement.querySelector('span');
-              if (spanElement) {
-                spanElement.textContent = data.events.length;
-              }
-            }
-            
-            const now = new Date();
-            const upcomingEvents = data.events.filter(function(event) {
-              return new Date(event.startTime) > now;
-            });
-            
-            if (upcomingEvents.length > 0) {
-              const nextEvent = upcomingEvents[0];
-              nextEventData = nextEvent;
-              const startTime = new Date(nextEvent.startTime);
-              const timeStr = String(startTime.getHours()).padStart(2, '0') + ':' + 
-                             String(startTime.getMinutes()).padStart(2, '0');
-              
-              const titleElement = document.getElementById('summaryNextEvent');
-              if (titleElement) {
-                titleElement.textContent = nextEvent.title.length > 15 ? 
-                                          nextEvent.title.substring(0, 15) + '...' : 
-                                          nextEvent.title;
-              }
-              
-              const timeElement = document.getElementById('summaryNextEventTime');
-              if (timeElement) {
-                timeElement.textContent = timeStr + ' 開始';
-              }
-              
-              const summaryElement = document.getElementById('nextEventSummary');
-              if (summaryElement) {
-                summaryElement.style.cursor = 'pointer';
-              }
-            } else {
-              nextEventData = null;
-              const titleElement = document.getElementById('summaryNextEvent');
-              if (titleElement) {
-                titleElement.textContent = '予定なし';
-              }
-              
-              const timeElement = document.getElementById('summaryNextEventTime');
-              if (timeElement) {
-                timeElement.textContent = '';
-              }
-              
-              const summaryElement = document.getElementById('nextEventSummary');
-              if (summaryElement) {
-                summaryElement.style.cursor = 'default';
-              }
-            }
+        .withSuccessHandler(function(result) {
+          if (result && result.success) {
+            applyDepartmentMetricsToSummary(result.metrics);
           }
         })
-        .getCalendarEvents(dateStr);
+        .withFailureHandler(function() {
+          if (!departmentMetricsCache) {
+            applyDepartmentMetricsToSummary(getDefaultDepartmentMetrics());
+          }
+        })
+        .getDepartmentMetrics();
     }
 
     function showTodayEvents() {
@@ -5333,6 +5591,7 @@
     function openSettingsModal() {
       document.getElementById('settingsModal').style.display = 'flex';
       loadFixedLinksForSettings();
+      loadDepartmentMetricsForSettings();
     }
 
     function loadFixedLinksForSettings() {
