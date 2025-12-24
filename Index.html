@@ -3697,6 +3697,23 @@
           <label for="memoTagsInput">タグ（カンマ区切り）</label>
           <input type="text" id="memoTagsInput" class="form-input" placeholder="例: 仕事, 重要, アイデア" />
         </div>
+        <div class="form-group">
+          <label>カラー</label>
+          <div class="color-picker-group">
+            <div class="color-option" style="background: #667eea;" data-color="#667eea" onclick="selectMemoColor('#667eea')"></div>
+            <div class="color-option" style="background: #43e97b;" data-color="#43e97b" onclick="selectMemoColor('#43e97b')"></div>
+            <div class="color-option" style="background: #F093FB;" data-color="#F093FB" onclick="selectMemoColor('#F093FB')"></div>
+            <div class="color-option" style="background: #4facfe;" data-color="#4facfe" onclick="selectMemoColor('#4facfe')"></div>
+            <div class="color-option" style="background: #F5576C;" data-color="#F5576C" onclick="selectMemoColor('#F5576C')"></div>
+            <div class="color-option" style="background: #fee140;" data-color="#fee140" onclick="selectMemoColor('#fee140')"></div>
+            <div class="color-option" style="background: #30cfd0;" data-color="#30cfd0" onclick="selectMemoColor('#30cfd0')"></div>
+            <div class="color-option" style="background: #8E54E9;" data-color="#8E54E9" onclick="selectMemoColor('#8E54E9')"></div>
+            <div class="color-option" style="background: #E74C3C;" data-color="#E74C3C" onclick="selectMemoColor('#E74C3C')"></div>
+            <div class="color-option" style="background: #F39C12;" data-color="#F39C12" onclick="selectMemoColor('#F39C12')"></div>
+            <div class="color-option" style="background: #27AE60;" data-color="#27AE60" onclick="selectMemoColor('#27AE60')"></div>
+            <div class="color-option" style="background: #2C3E50;" data-color="#2C3E50" onclick="selectMemoColor('#2C3E50')"></div>
+          </div>
+        </div>
         <div class="form-actions">
           <button class="btn btn-secondary" onclick="closeModal('memoModal')">キャンセル</button>
           <button class="btn btn-danger" id="deleteMemoBtn" onclick="deleteMemoFromModal()" style="display: none;">
@@ -5446,6 +5463,23 @@
     let allMemos = [];
     let currentMemoView = 'card';
     let currentMemoTagFilter = null;
+    let selectedMemoColor = '#667eea';
+
+    function selectMemoColor(color) {
+      selectedMemoColor = color;
+      updateMemoColorSelection();
+    }
+
+    function updateMemoColorSelection() {
+      const colorOptions = document.querySelectorAll('#memoModal .color-option');
+      colorOptions.forEach(function(option) {
+        if (option.dataset.color === selectedMemoColor) {
+          option.classList.add('selected');
+        } else {
+          option.classList.remove('selected');
+        }
+      });
+    }
 
     function loadMemos() {
       google.script.run
@@ -5521,7 +5555,10 @@
       let html = '';
       filteredMemos.forEach(function(memo) {
         const tagsJson = memo.tags ? JSON.stringify(memo.tags) : '[]';
-        html += '<div class="memo-item" data-memo-id="' + memo.id + '">';
+        const memoColor = memo.color || '#667eea';
+        const bgStyle = 'border-left: 4px solid ' + memoColor + '; background: ' + hexToRgba(memoColor, 0.15) + ';';
+        
+        html += '<div class="memo-item" data-memo-id="' + memo.id + '" style="' + bgStyle + '">';
         html += '<div class="memo-content">' + escapeHtml(memo.content) + '</div>';
         if (memo.tags && memo.tags.length > 0) {
           html += '<div class="memo-tags">';
@@ -5574,6 +5611,9 @@
       if (contentInput) contentInput.value = '';
       if (tagsInput) tagsInput.value = '';
       if (deleteBtn) deleteBtn.style.display = 'none';
+      
+      selectMemoColor('#667eea');
+      
       if (modal) modal.style.display = 'block';
     }
 
@@ -5596,6 +5636,9 @@
       if (contentInput) contentInput.value = memo.content;
       if (tagsInput) tagsInput.value = memo.tags ? memo.tags.join(', ') : '';
       if (deleteBtn) deleteBtn.style.display = 'flex';
+      
+      selectMemoColor(memo.color || '#667eea');
+      
       if (modal) modal.style.display = 'block';
     }
 
@@ -5628,7 +5671,7 @@
           .withFailureHandler(function(error) {
             alert('メモの更新に失敗しました');
           })
-          .updateMemo(editingMemoId, content, tags);
+          .updateMemo(editingMemoId, content, tags, selectedMemoColor);
       } else {
         google.script.run
           .withSuccessHandler(function(result) {
@@ -5641,7 +5684,7 @@
           .withFailureHandler(function(error) {
             alert('メモの追加に失敗しました');
           })
-          .saveMemo(content, tags);
+          .saveMemo(content, tags, selectedMemoColor);
       }
     }
 

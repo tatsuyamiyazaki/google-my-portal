@@ -1732,7 +1732,7 @@ function getMemos() {
   }
 }
 
-function saveMemo(content, tags) {
+function saveMemo(content, tags, color) {
   try {
     const userProperties = PropertiesService.getUserProperties();
     const memosJson = userProperties.getProperty('memos');
@@ -1742,6 +1742,7 @@ function saveMemo(content, tags) {
       id: Utilities.getUuid(),
       content: content,
       tags: tags || [], // Array of strings
+      color: color || '#667eea',
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime()
     };
@@ -1755,7 +1756,7 @@ function saveMemo(content, tags) {
   }
 }
 
-function updateMemo(id, content, tags) {
+function updateMemo(id, content, tags, color) {
   try {
     const userProperties = PropertiesService.getUserProperties();
     const memosJson = userProperties.getProperty('memos');
@@ -1766,6 +1767,7 @@ function updateMemo(id, content, tags) {
     
     memos[index].content = content;
     if (tags) memos[index].tags = tags;
+    if (color) memos[index].color = color;
     memos[index].updatedAt = new Date().getTime();
     
     userProperties.setProperty('memos', JSON.stringify(memos));
