@@ -1833,51 +1833,67 @@ function saveFixedLinks(links) {
 
 // --- Department Metrics Functions ---
 
-function getDefaultDepartmentMetrics_() {
-  return {
-    E1: { sales: '', margin: '', hourly: '' },
-    E2: { sales: '', margin: '', hourly: '' },
-    EB: { sales: '', margin: '', hourly: '' }
-  };
-}
-
-function normalizeDepartmentMetrics_(metrics) {
-  const defaults = getDefaultDepartmentMetrics_();
-  if (!metrics || typeof metrics !== 'object') return defaults;
-
-  ['E1', 'E2', 'EB'].forEach(function(deptId) {
-    const source = metrics[deptId] || {};
-    ['sales', 'margin', 'hourly'].forEach(function(key) {
-      if (source[key] !== undefined && source[key] !== null) {
-        defaults[deptId][key] = String(source[key]).trim();
-      }
-    });
-  });
-
-  return defaults;
-}
-
 function getDepartmentMetrics() {
   try {
-    const userProperties = PropertiesService.getUserProperties();
-    const metricsJson = userProperties.getProperty('departmentMetrics');
-    const metrics = metricsJson ? JSON.parse(metricsJson) : null;
+    const scriptProperties = PropertiesService.getScriptProperties();
+    
+    // スプレッドシートのURLを取得
+    const sheetUrl = scriptProperties.getProperty('management_index_sheet_url');
+    if (!sheetUrl) {
+      return { success: false, error: 'スプレッドシートURLが設定されていません' };
+    }
+    
+    // スプレッドシートを開く
+    const ss = SpreadsheetApp.openByUrl(sheetUrl);
+    const sheetName = scriptProperties.getProperty('dashboard_sheet_name') || 'Dashboard';
+    const sheet = ss.getSheetByName(sheetName);
+    
+    if (!sheet) {
+      return { success: false, error: 'シート "' + sheetName + '" が見つかりません' };
+    }
+    
+    // プロパティから設定値を取得
+    const e1Row = parseInt(scriptProperties.getProperty('e1') || '2');
+    const e2Row = parseInt(scriptProperties.getProperty('e2') || '3');
+    const ebRow = parseInt(scriptProperties.getProperty('eb') || '4');
+    
+    const salesCol = scriptProperties.getProperty('sales') || 'B';
+    const salesPlanCol = scriptProperties.getProperty('sales_plan') || 'C';
+    const salesRateCol = scriptProperties.getProperty('sales_rate') || 'D';
+    const profitCol = scriptProperties.getProperty('profit') || 'E';
+    const profitPlanCol = scriptProperties.getProperty('profit_plan') || 'F';
+    const profitRateCol = scriptProperties.getProperty('profit_rate') || 'G';
+    const profitPerTimeCol = scriptProperties.getProperty('profit_per_time') || 'H';
+    const profitPerTimePlanCol = scriptProperties.getProperty('profit_per_time_plan') || 'I';
+    const profitPerTimeRateCol = scriptProperties.getProperty('profit_per_time_rate') || 'J';
+    
+    // データを取得する関数
+    function getDeptData(row) {
+      return {
+        sales: sheet.getRange(salesCol + row).getValue() || '',
+        salesPlan: sheet.getRange(salesPlanCol + row).getValue() || '',
+        salesRate: sheet.getRange(salesRateCol + row).getValue() || '',
+        profit: sheet.getRange(profitCol + row).getValue() || '',
+        profitPlan: sheet.getRange(profitPlanCol + row).getValue() || '',
+        profitRate: sheet.getRange(profitRateCol + row).getValue() || '',
+        profitPerTime: sheet.getRange(profitPerTimeCol + row).getValue() || '',
+        profitPerTimePlan: sheet.getRange(profitPerTimePlanCol + row).getValue() || '',
+        profitPerTimeRate: sheet.getRange(profitPerTimeRateCol + row).getValue() || ''
+      };
+    }
+    
+    const metrics = {
+      E1: getDeptData(e1Row),
+      E2: getDeptData(e2Row),
+      EB: getDeptData(ebRow)
+    };
+    
     return {
       success: true,
-      metrics: normalizeDepartmentMetrics_(metrics)
+      metrics: metrics
     };
   } catch (error) {
-    return { success: false, error: error.toString() };
-  }
-}
-
-function saveDepartmentMetrics(metrics) {
-  try {
-    const userProperties = PropertiesService.getUserProperties();
-    const normalized = normalizeDepartmentMetrics_(metrics || {});
-    userProperties.setProperty('departmentMetrics', JSON.stringify(normalized));
-    return { success: true };
-  } catch (error) {
+    Logger.log('Error fetching department metrics: ' + error.toString());
     return { success: false, error: error.toString() };
   }
 }
