@@ -483,12 +483,12 @@
     }
 
     .main-content > .info-card {
-      min-height: 480px;
+      min-height: 400px;
     }
 
     .bottom-section {
       display: grid;
-      grid-template-columns: 380px 380px 1fr;
+      grid-template-columns: 380px 1fr;
       gap: 8px;
       margin-bottom: 8px;
     }
@@ -526,9 +526,8 @@
     }
 
     .calendar-card {
-      height: 480px;
-      min-height: 480px;
-      max-height: 480px;
+      height: auto;
+      min-height: 400px;
     }
 
     .calendar-widget {
@@ -3387,14 +3386,8 @@
 
     <div class="main-content">
       <div class="info-card">
-        <div class="email-header-row">
-          <h2><span class="material-icons">inbox</span><span id="emailListTitle">未読メール</span></h2>
-          <div class="email-toggle" role="tablist" aria-label="メール表示切り替え">
-            <button class="email-toggle-btn active" type="button" data-mode="unread" onclick="setEmailListMode('unread')">未読</button>
-            <button class="email-toggle-btn" type="button" data-mode="inbox" onclick="setEmailListMode('inbox')">受信トレイ</button>
-          </div>
-        </div>
-        <div id="emailList">
+        <h2><span class="material-icons">push_pin</span>固定リンク集</h2>
+        <div id="fixedLinksList" class="fixed-links-list">
           <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
         </div>
       </div>
@@ -3440,13 +3433,6 @@
     </div>
 
     <div class="bottom-section">
-      <div class="info-card">
-        <h2><span class="material-icons">push_pin</span>固定リンク集</h2>
-        <div id="fixedLinksList" class="fixed-links-list">
-          <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
-        </div>
-      </div>
-
       <div class="info-card">
         <div class="links-section">
           <div class="links-header">
