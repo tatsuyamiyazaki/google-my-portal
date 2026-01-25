@@ -47,6 +47,14 @@
       gap: 15px;
     }
 
+    .header-notifications {
+      display: flex;
+      gap: 8px;
+      margin-left: 10px;
+      padding-left: 15px;
+      border-left: 2px solid rgba(232, 234, 246, 0.2);
+    }
+
     h1 {
       color: #e8eaf6;
       font-size: 18px;
@@ -3283,6 +3291,21 @@
           <span class="logo">◈</span>
           マイダッシュボード
         </h1>
+        <div class="header-notifications">
+          <a href="https://mail.google.com" target="_blank" class="nav-btn gmail" title="Gmail">
+            <span class="material-icons">mail</span>
+            <span class="badge" id="unreadBadge" style="display: none;">0</span>
+          </a>
+          <a href="https://chat.google.com" target="_blank" class="nav-btn chat" title="Google Chat">
+            <span class="material-icons">chat</span>
+          </a>
+          <a href="https://calendar.google.com" target="_blank" class="nav-btn calendar" title="Google Calendar">
+            <span class="material-icons">calendar_month</span>
+          </a>
+          <a href="https://drive.google.com" target="_blank" class="nav-btn drive" title="Google Drive">
+            <span class="material-icons">folder</span>
+          </a>
+        </div>
       </div>
       <div class="header-right">
         <div class="user-info">
@@ -4240,8 +4263,9 @@
         loadGmailData(currentEmailListMode);
       }, normalized.emailRefreshInterval);
 
-      if (chatRefreshInterval) clearInterval(chatRefreshInterval);
-      chatRefreshInterval = setInterval(loadChatData, normalized.chatRefreshInterval);
+      // Chat API未設定のため無効化
+      // if (chatRefreshInterval) clearInterval(chatRefreshInterval);
+      // chatRefreshInterval = setInterval(loadChatData, normalized.chatRefreshInterval);
 
       if (taskRefreshInterval) clearInterval(taskRefreshInterval);
       taskRefreshInterval = setInterval(loadTodoList, normalized.taskRefreshINterval);
@@ -4392,7 +4416,7 @@
     }
 
     loadGmailData(currentEmailListMode);
-    loadChatData(); // Chatデータも読み込む
+    // loadChatData(); // Chat API未設定のため無効化
     updateSummaryDashboard();
     initializeRefreshIntervals();
     function convertLinksToClickable(text) {
