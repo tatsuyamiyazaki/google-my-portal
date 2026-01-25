@@ -1721,12 +1721,66 @@ function getChatData() {
 
 // --- Memo Functions ---
 
+function getMemoSheet() {
+  const scriptProperties = PropertiesService.getScriptProperties();
+  const sheetId = scriptProperties.getProperty('work_management_sheet_id');
+  const sheetName = scriptProperties.getProperty('memo_sheet_name');
+  const ss = SpreadsheetApp.openById(sheetId);
+  return ss.getSheetByName(sheetName);
+}
+
+function getMemoColumnIndices() {
+  const scriptProperties = PropertiesService.getScriptProperties();
+  return {
+    memo: columnLetterToIndex(scriptProperties.getProperty('memo_col')),
+    tag: columnLetterToIndex(scriptProperties.getProperty('tag_col')),
+    color: columnLetterToIndex(scriptProperties.getProperty('color_col'))
+  };
+}
+
+function columnLetterToIndex(letter) {
+  if (!letter) return 1;
+  letter = letter.toUpperCase();
+  let index = 0;
+  for (let i = 0; i < letter.length; i++) {
+    index = index * 26 + (letter.charCodeAt(i) - 64);
+  }
+  return index;
+}
+
 function getMemos() {
   try {
-    const userProperties = PropertiesService.getUserProperties();
-    const memosJson = userProperties.getProperty('memos');
-    const memos = memosJson ? JSON.parse(memosJson) : [];
-    return { success: true, memos: memos };
+    const sheet = getMemoSheet();
+    const cols = getMemoColumnIndices();
+    const lastRow = sheet.getLastRow();
+
+    if (lastRow < 2) {
+      return { success: true, memos: [] };
+    }
+
+    const memos = [];
+    const maxCol = Math.max(cols.memo, cols.tag, cols.color);
+    const data = sheet.getRange(2, 1, lastRow - 1, maxCol).getValues();
+
+    for (let i = 0; i < data.length; i++) {
+      const content = data[i][cols.memo - 1];
+      if (!content) continue;
+
+      const tagsStr = data[i][cols.tag - 1] || '';
+      const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(t => t) : [];
+      const color = data[i][cols.color - 1] || '#667eea';
+
+      memos.push({
+        id: i + 2, // 行番号をIDとして使用（2行目から開始）
+        content: content,
+        tags: tags,
+        color: color,
+        createdAt: new Date().getTime(),
+        updatedAt: new Date().getTime()
+      });
+    }
+
+    return { success: true, memos: memos.reverse() }; // 新しいものが上に来るよう逆順
   } catch (error) {
     return { success: false, error: error.toString() };
   }
@@ -1734,22 +1788,27 @@ function getMemos() {
 
 function saveMemo(content, tags, color) {
   try {
-    const userProperties = PropertiesService.getUserProperties();
-    const memosJson = userProperties.getProperty('memos');
-    const memos = memosJson ? JSON.parse(memosJson) : [];
-    
+    const sheet = getMemoSheet();
+    const cols = getMemoColumnIndices();
+    const lastRow = sheet.getLastRow();
+    const newRow = lastRow + 1;
+
+    const tagsStr = (tags || []).join(', ');
+    const memoColor = color || '#667eea';
+
+    sheet.getRange(newRow, cols.memo).setValue(content);
+    sheet.getRange(newRow, cols.tag).setValue(tagsStr);
+    sheet.getRange(newRow, cols.color).setValue(memoColor);
+
     const newMemo = {
-      id: Utilities.getUuid(),
+      id: newRow,
       content: content,
-      tags: tags || [], // Array of strings
-      color: color || '#667eea',
+      tags: tags || [],
+      color: memoColor,
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime()
     };
-    
-    memos.unshift(newMemo); // Add to top
-    userProperties.setProperty('memos', JSON.stringify(memos));
-    
+
     return { success: true, memo: newMemo };
   } catch (error) {
     return { success: false, error: error.toString() };
@@ -1758,19 +1817,23 @@ function saveMemo(content, tags, color) {
 
 function updateMemo(id, content, tags, color) {
   try {
-    const userProperties = PropertiesService.getUserProperties();
-    const memosJson = userProperties.getProperty('memos');
-    let memos = memosJson ? JSON.parse(memosJson) : [];
-    
-    const index = memos.findIndex(m => m.id === id);
-    if (index === -1) return { success: false, error: 'Memo not found' };
-    
-    memos[index].content = content;
-    if (tags) memos[index].tags = tags;
-    if (color) memos[index].color = color;
-    memos[index].updatedAt = new Date().getTime();
-    
-    userProperties.setProperty('memos', JSON.stringify(memos));
+    const sheet = getMemoSheet();
+    const cols = getMemoColumnIndices();
+    const row = parseInt(id);
+
+    if (row < 2 || row > sheet.getLastRow()) {
+      return { success: false, error: 'Memo not found' };
+    }
+
+    sheet.getRange(row, cols.memo).setValue(content);
+    if (tags) {
+      const tagsStr = tags.join(', ');
+      sheet.getRange(row, cols.tag).setValue(tagsStr);
+    }
+    if (color) {
+      sheet.getRange(row, cols.color).setValue(color);
+    }
+
     return { success: true };
   } catch (error) {
     return { success: false, error: error.toString() };
@@ -1779,12 +1842,14 @@ function updateMemo(id, content, tags, color) {
 
 function deleteMemo(id) {
   try {
-    const userProperties = PropertiesService.getUserProperties();
-    const memosJson = userProperties.getProperty('memos');
-    let memos = memosJson ? JSON.parse(memosJson) : [];
-    
-    memos = memos.filter(m => m.id !== id);
-    userProperties.setProperty('memos', JSON.stringify(memos));
+    const sheet = getMemoSheet();
+    const row = parseInt(id);
+
+    if (row < 2 || row > sheet.getLastRow()) {
+      return { success: false, error: 'Memo not found' };
+    }
+
+    sheet.deleteRow(row);
     return { success: true };
   } catch (error) {
     return { success: false, error: error.toString() };

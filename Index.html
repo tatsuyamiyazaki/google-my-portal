@@ -5778,7 +5778,7 @@
     }
 
     function editMemo(id) {
-      const memo = allMemos.find(function(m) { return m.id === id; });
+      const memo = allMemos.find(function(m) { return String(m.id) === String(id); });
       if (!memo) {
         alert('メモが見つかりません');
         return;
