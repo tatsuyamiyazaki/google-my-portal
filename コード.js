@@ -53,8 +53,9 @@ function getRefreshIntervals() {
 
 function getGmailData(listMode) {
   try {
-    const unreadThreads = GmailApp.search('is:unread in:inbox', 0, 100);
-    const unreadCount = unreadThreads.length;
+    // 未読カウント機能は無効化されました
+    // const unreadThreads = GmailApp.search('is:unread in:inbox', 0, 100);
+    const unreadCount = 0; // 常に0を返す
     const normalizedMode = listMode === 'inbox' ? 'inbox' : 'unread';
     const listQuery = normalizedMode === 'inbox' ? 'in:inbox' : 'is:unread in:inbox';
     const listThreads = GmailApp.search(listQuery, 0, 100);
@@ -104,7 +105,7 @@ function getGmailData(listMode) {
     
     return {
       success: true,
-      unreadCount: unreadCount,
+      unreadCount: 0, // 未読カウント機能は無効化
       latestEmails: latestEmails,
       listMode: normalizedMode
     };

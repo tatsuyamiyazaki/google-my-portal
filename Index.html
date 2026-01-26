@@ -3294,7 +3294,6 @@
         <div class="header-notifications">
           <a href="https://mail.google.com" target="_blank" class="nav-btn gmail" title="Gmail">
             <span class="material-icons">mail</span>
-            <span class="badge" id="unreadBadge" style="display: none;">0</span>
           </a>
           <a href="https://chat.google.com" target="_blank" class="nav-btn chat" title="Google Chat">
             <span class="material-icons">chat</span>
@@ -4324,26 +4323,27 @@
             return;
           }
           
-          const countElement = document.getElementById('summaryUnreadCount');
-          if (countElement && countElement.querySelector) {
-            const spanElement = countElement.querySelector('span');
-            if (spanElement) {
-              spanElement.textContent = gmailData.unreadCount;
-            }
-          }
-          
-          if (gmailData.unreadCount > 0) {
-            const badge = document.getElementById('unreadBadge');
-            if (badge) {
-              badge.textContent = gmailData.unreadCount > 99 ? '99+' : gmailData.unreadCount;
-              badge.style.display = 'block';
-            }
-          } else {
-            const badge = document.getElementById('unreadBadge');
-            if (badge) {
-              badge.style.display = 'none';
-            }
-          }
+          // 未読バッジ機能は無効化されました
+          // const countElement = document.getElementById('summaryUnreadCount');
+          // if (countElement && countElement.querySelector) {
+          //   const spanElement = countElement.querySelector('span');
+          //   if (spanElement) {
+          //     spanElement.textContent = gmailData.unreadCount;
+          //   }
+          // }
+          // 
+          // if (gmailData.unreadCount > 0) {
+          //   const badge = document.getElementById('unreadBadge');
+          //   if (badge) {
+          //     badge.textContent = gmailData.unreadCount > 99 ? '99+' : gmailData.unreadCount;
+          //     badge.style.display = 'block';
+          //   }
+          // } else {
+          //   const badge = document.getElementById('unreadBadge');
+          //   if (badge) {
+          //     badge.style.display = 'none';
+          //   }
+          // }
           
           const emailList = document.getElementById('emailList');
           if (!emailList) return;
