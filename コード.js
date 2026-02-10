@@ -410,6 +410,7 @@ function getTodoTasks() {
       });
       
       const tasks = Tasks.Tasks.list(taskList.id, {
+        showAssigned: true,
         showCompleted: false,
         maxResults: 50
       });
@@ -812,6 +813,7 @@ function getCalendarEvents(dateStr) {
         for (let i = 0; i < taskLists.length; i++) {
           const taskList = taskLists[i];
           const tasks = Tasks.Tasks.list(taskList.id, {
+            showAssigned: true,
             showCompleted: false,
             maxResults: 100
           });
@@ -1107,6 +1109,7 @@ function getMonthEvents(year, month) {
         for (let i = 0; i < taskLists.length; i++) {
           const taskList = taskLists[i];
           const tasks = Tasks.Tasks.list(taskList.id, {
+            showAssigned: true,
             showCompleted: false,
             maxResults: 100
           });
