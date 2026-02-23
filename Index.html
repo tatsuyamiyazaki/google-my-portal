@@ -484,7 +484,7 @@
 
     .main-content {
       display: grid;
-      grid-template-columns: 380px 1fr 380px;
+      grid-template-columns: 253px 253px 1fr 380px;
       grid-template-rows: auto;
       gap: 8px;
       margin-bottom: 8px;
@@ -497,7 +497,7 @@
 
     .bottom-section {
       display: grid;
-      grid-template-columns: 380px 1fr;
+      grid-template-columns: 1fr;
       gap: 8px;
       margin-bottom: 8px;
     }
@@ -3205,7 +3205,7 @@
 
     @media (max-width: 1400px) {
       .main-content {
-        grid-template-columns: 320px 1fr 320px;
+        grid-template-columns: 213px 213px 1fr 320px;
       }
       .main-content > .info-card {
         min-height: 420px;
@@ -3216,7 +3216,7 @@
         max-height: 456px;
       }
       .bottom-section {
-        grid-template-columns: 320px 320px 1fr;
+        grid-template-columns: 1fr;
       }
     }
 
@@ -3233,13 +3233,10 @@
         max-height: 420px;
       }
       .bottom-section {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
       }
       .bottom-section > .info-card {
         min-height: 180px;
-      }
-      .bottom-section > .info-card:nth-child(3) {
-        grid-column: 1 / -1;
       }
     }
 
@@ -3411,9 +3408,31 @@
 
     <div class="main-content">
       <div class="info-card">
-        <h2><span class="material-icons">push_pin</span>固定リンク集</h2>
+        <h2><span class="material-icons">push_pin</span>固定リンク</h2>
         <div id="fixedLinksList" class="fixed-links-list">
           <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="links-section">
+          <div class="links-header">
+            <div class="links-title"><span class="material-icons">bookmark</span>カスタムリンク</div>
+            <div class="links-actions">
+              <button class="add-folder-btn" onclick="openReorderModal()" title="並替">
+                <span class="material-icons">swap_vert</span>
+              </button>
+              <button class="add-folder-btn" onclick="openFolderModal()" title="フォルダ">
+                <span class="material-icons">create_new_folder</span>
+              </button>
+              <button class="add-link-btn" onclick="openLinkModal()" title="リンク">
+                <span class="material-icons">add</span>
+              </button>
+            </div>
+          </div>
+          <div id="customLinksList">
+            <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
+          </div>
         </div>
       </div>
 
@@ -3458,28 +3477,6 @@
     </div>
 
     <div class="bottom-section">
-      <div class="info-card">
-        <div class="links-section">
-          <div class="links-header">
-            <div class="links-title"><span class="material-icons">bookmark</span>カスタムリンク集</div>
-            <div class="links-actions">
-              <button class="add-folder-btn" onclick="openReorderModal()">
-                <span class="material-icons">swap_vert</span>並替
-              </button>
-              <button class="add-folder-btn" onclick="openFolderModal()">
-                <span class="material-icons">create_new_folder</span>フォルダ
-              </button>
-              <button class="add-link-btn" onclick="openLinkModal()">
-                <span class="material-icons">add</span>リンク
-              </button>
-            </div>
-          </div>
-          <div id="customLinksList">
-            <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
-          </div>
-        </div>
-      </div>
-
       <div class="info-card">
         <div class="memo-section">
           <div class="memo-header">
