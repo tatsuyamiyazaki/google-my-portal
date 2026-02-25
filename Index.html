@@ -4099,7 +4099,7 @@
       // タイプに応じた書式設定
       if (type === 'sales' || type === 'salesPlan' || type === 'profit' || type === 'profitPlan') {
         // 売上・限界利益系: 1000で割って小数点以下切り捨て
-        const divided = Math.floor(numValue / 1000);
+        const divided = Math.floor(numValue);
         formattedValue = divided.toLocaleString('ja-JP');
       } else if (type === 'salesRate' || type === 'profitRate' || type === 'profitPerTimeRate') {
         // 達成率系: 100倍して小数点第1位まで表示、%付き
