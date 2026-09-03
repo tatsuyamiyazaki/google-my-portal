@@ -497,8 +497,9 @@
 
     .main-content > .info-card:nth-child(1),
     .main-content > .info-card:nth-child(2) {
-      min-height: 580px;
-      max-height: 580px;
+      grid-row: 1 / 3;
+      min-height: unset;
+      max-height: unset;
     }
 
     .bottom-section {
@@ -506,7 +507,13 @@
       grid-template-columns: 1fr;
       gap: 8px;
       margin-bottom: 8px;
-      max-width: 750px;
+    }
+
+    .main-content > .info-card.memo-under-calendar {
+      grid-column: 3 / 5;
+      grid-row: 2;
+      min-height: 350px;
+      max-height: 350px;
     }
 
     .bottom-section .info-card {
@@ -546,6 +553,50 @@
       height: auto;
       min-height: 267px;
       max-height: 267px;
+    }
+
+    .calendar-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+
+    .calendar-refresh-btn {
+      background: transparent;
+      border: 1px solid #b0b0b0;
+      border-radius: 6px;
+      padding: 4px 6px;
+      cursor: pointer;
+      color: #b0b0b0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .calendar-refresh-btn:hover {
+      background: rgba(176, 176, 176, 0.2);
+      color: #ffffff;
+    }
+
+    .calendar-refresh-btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .calendar-refresh-btn .material-icons {
+      font-size: 16px;
+    }
+
+    .calendar-refresh-btn.is-loading .material-icons {
+      animation: calendar-refresh-spin 1s linear infinite;
+    }
+
+    @keyframes calendar-refresh-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
     .calendar-widget {
@@ -3444,7 +3495,12 @@
       </div>
 
       <div class="info-card calendar-card">
-        <h2><span class="material-icons">event_note</span>カレンダー</h2>
+        <div class="calendar-card-header">
+          <h2 style="margin-bottom: 0;"><span class="material-icons">event_note</span>カレンダー</h2>
+          <button class="calendar-refresh-btn" id="calendarRefreshBtn" onclick="refreshCalendarView()" title="カレンダーを更新">
+            <span class="material-icons">refresh</span>
+          </button>
+        </div>
         <div class="calendar-widget">
           <div class="calendar-header">
             <div class="calendar-nav">
@@ -3481,10 +3537,7 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="bottom-section">
-      <div class="info-card">
+      <div class="info-card memo-under-calendar">
         <div class="memo-section">
           <div class="memo-header">
             <h2 style="margin-bottom: 0;"><span class="material-icons">note</span>メモ</h2>
@@ -4073,8 +4126,8 @@
     let currentDetailEvent = null;
     let dayEventsCache = {};
     let emailRefreshInterval = null;
-    let calendarRefreshInterval = null;
     let summaryRefreshInterval = null;
+    let calendarRequestId = 0; // カレンダー取得の連番。古い応答を捨てるために使う
     let currentThreadId = null;
     let editingLinkId = null;
     let editingFolderId = null;
@@ -4239,7 +4292,6 @@
     const refreshIntervalDefaults = {
       emailRefreshInterval: 30000,
       chatRefreshInterval: 30000,
-      calendarRefreshInterval: 60000,
       taskRefreshINterval: 60000
     };
 
@@ -4253,7 +4305,6 @@
       return {
         emailRefreshInterval: normalize(source.emailRefreshInterval, refreshIntervalDefaults.emailRefreshInterval),
         chatRefreshInterval: normalize(source.chatRefreshInterval, refreshIntervalDefaults.chatRefreshInterval),
-        calendarRefreshInterval: normalize(source.calendarRefreshInterval, refreshIntervalDefaults.calendarRefreshInterval),
         taskRefreshINterval: normalize(source.taskRefreshINterval, refreshIntervalDefaults.taskRefreshINterval)
       };
     }
@@ -4273,10 +4324,7 @@
       if (taskRefreshInterval) clearInterval(taskRefreshInterval);
       taskRefreshInterval = setInterval(loadTodoList, normalized.taskRefreshINterval);
 
-      if (calendarRefreshInterval) clearInterval(calendarRefreshInterval);
-      calendarRefreshInterval = setInterval(function() {
-        refreshCalendarView();
-      }, normalized.calendarRefreshInterval);
+      // カレンダーはページ読み込み時と手動更新のみ（定期更新なし）
 
       if (summaryRefreshInterval) clearInterval(summaryRefreshInterval);
       summaryRefreshInterval = setInterval(updateSummaryDashboard, 60000);
@@ -6203,9 +6251,14 @@
     }
 
     function loadMonthEvents() {
+      const requestId = ++calendarRequestId;
+      setCalendarRefreshing(true);
+
       google.script.run
         .withSuccessHandler(function(data) {
-          if (data.success) {
+          if (requestId !== calendarRequestId) return;
+          setCalendarRefreshing(false);
+          if (data && data.success) {
             eventDatesData = data.eventDates;
           } else {
             console.error('Failed to fetch month events', data && data.error);
@@ -6215,6 +6268,8 @@
         })
         .withFailureHandler(function(error) {
           console.error('getMonthEvents call failed', error);
+          if (requestId !== calendarRequestId) return;
+          setCalendarRefreshing(false);
           eventDatesData = {};
           renderCalendar();
         })
@@ -6284,6 +6339,13 @@
         currentDayDate.setDate(currentDayDate.getDate() + delta);
         refreshCalendarView();
       }
+    }
+
+    function setCalendarRefreshing(isRefreshing) {
+      const btn = document.getElementById('calendarRefreshBtn');
+      if (!btn) return;
+      btn.disabled = isRefreshing;
+      btn.classList.toggle('is-loading', isRefreshing);
     }
 
     function refreshCalendarView() {
@@ -6366,18 +6428,38 @@
       }
 
       // すべての日のイベントを並列で取得
+      const requestId = ++calendarRequestId;
       let completedRequests = 0;
+      let failedRequests = 0;
       const allEvents = {};
 
-      dayData.forEach(function(day, index) {
+      setCalendarRefreshing(true);
+
+      const finishRequest = function() {
+        completedRequests++;
+        if (completedRequests < dayData.length) return;
+        // 古いリクエストの応答は無視する
+        if (requestId !== calendarRequestId) return;
+
+        setCalendarRefreshing(false);
+        if (failedRequests === dayData.length) {
+          weekView.innerHTML = '<div class="no-events">予定の取得に失敗しました</div>';
+          return;
+        }
+        renderWeekViewGrid(dayData, allEvents);
+      };
+
+      dayData.forEach(function(day) {
         google.script.run
           .withSuccessHandler(function(data) {
-            allEvents[day.dateStr] = data.success ? data.events : [];
-            completedRequests++;
-
-            if (completedRequests === 7) {
-              renderWeekViewGrid(dayData, allEvents);
-            }
+            allEvents[day.dateStr] = (data && data.success) ? data.events : [];
+            finishRequest();
+          })
+          .withFailureHandler(function(error) {
+            console.error('getCalendarEvents failed for ' + day.dateStr, error);
+            allEvents[day.dateStr] = [];
+            failedRequests++;
+            finishRequest();
           })
           .getCalendarEvents(day.dateStr);
       });
@@ -6505,9 +6587,20 @@
 
       dayView.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
 
+      const requestId = ++calendarRequestId;
+      setCalendarRefreshing(true);
+
       google.script.run
         .withSuccessHandler(function(data) {
+          if (requestId !== calendarRequestId) return;
+          setCalendarRefreshing(false);
           renderDayViewGrid(data, dateStr, weekdays);
+        })
+        .withFailureHandler(function(error) {
+          console.error('getCalendarEvents failed for ' + dateStr, error);
+          if (requestId !== calendarRequestId) return;
+          setCalendarRefreshing(false);
+          dayView.innerHTML = '<div class="no-events">予定の取得に失敗しました</div>';
         })
         .getCalendarEvents(dateStr);
     }
@@ -7690,7 +7783,6 @@
     window.addEventListener('beforeunload', function() {
       if (emailRefreshInterval) clearInterval(emailRefreshInterval);
       if (chatRefreshInterval) clearInterval(chatRefreshInterval);
-      if (calendarRefreshInterval) clearInterval(calendarRefreshInterval);
       if (summaryRefreshInterval) clearInterval(summaryRefreshInterval);
     });
   </script>
