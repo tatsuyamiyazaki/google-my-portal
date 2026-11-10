@@ -492,16 +492,21 @@
     }
 
     .main-content {
+      /* 1段目（タスク）と2段目（メモ）の高さ。カレンダーは2段分の高さになる */
+      --main-gap: 8px;
+      --main-row1-height: 400px;
+      --main-row2-height: 350px;
       display: grid;
       grid-template-columns: 253px 253px 1fr 380px;
-      grid-template-rows: auto;
-      gap: 8px;
+      /* 段の高さを固定し、リンク一覧が長くてもカード内スクロールで収める */
+      grid-template-rows: var(--main-row1-height) var(--main-row2-height);
+      gap: var(--main-gap);
       margin-bottom: 8px;
     }
 
     .main-content > .info-card {
-      min-height: 400px;
-      max-height: 400px;
+      min-height: var(--main-row1-height);
+      max-height: var(--main-row1-height);
     }
 
     .main-content > .info-card:nth-child(1),
@@ -518,11 +523,20 @@
       margin-bottom: 8px;
     }
 
-    .main-content > .info-card.memo-under-calendar {
-      grid-column: 3 / 5;
+    /* カレンダーは3列目の1〜2段目を通しで使う */
+    .main-content > .info-card.calendar-card {
+      grid-column: 3;
+      grid-row: 1 / 3;
+      min-height: calc(var(--main-row1-height) + var(--main-gap) + var(--main-row2-height));
+      max-height: calc(var(--main-row1-height) + var(--main-gap) + var(--main-row2-height));
+    }
+
+    /* メモはタスクリストの下（4列目の2段目） */
+    .main-content > .info-card.memo-under-tasks {
+      grid-column: 4;
       grid-row: 2;
-      min-height: 350px;
-      max-height: 350px;
+      min-height: var(--main-row2-height);
+      max-height: var(--main-row2-height);
     }
 
     .bottom-section .info-card {
@@ -556,12 +570,6 @@
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
-    }
-
-    .calendar-card {
-      height: auto;
-      min-height: 267px;
-      max-height: 267px;
     }
 
     .calendar-card-header {
@@ -3272,15 +3280,8 @@
 
     @media (max-width: 1400px) {
       .main-content {
+        --main-row1-height: 420px;
         grid-template-columns: 213px 213px 1fr 320px;
-      }
-      .main-content > .info-card {
-        min-height: 420px;
-      }
-      .calendar-card {
-        height: 456px;
-        min-height: 456px;
-        max-height: 456px;
       }
       .bottom-section {
         grid-template-columns: 1fr;
@@ -3289,15 +3290,22 @@
 
     @media (max-width: 1200px) {
       .main-content {
+        --main-row1-height: 400px;
         grid-template-columns: 1fr 1fr;
+        grid-template-rows: none;
       }
       .main-content > .info-card {
         min-height: 360px;
       }
-      .calendar-card {
-        height: 420px;
-        min-height: 420px;
-        max-height: 420px;
+      /* 列数が減る幅では固定配置をやめ、通常の流し込みに戻す */
+      .main-content > .info-card.calendar-card,
+      .main-content > .info-card.memo-under-tasks {
+        grid-column: auto;
+        grid-row: auto;
+      }
+      .main-content > .info-card.calendar-card {
+        min-height: var(--main-row1-height);
+        max-height: var(--main-row1-height);
       }
       .bottom-section {
         grid-template-columns: 1fr;
@@ -3313,11 +3321,6 @@
       }
       .main-content > .info-card {
         min-height: 360px;
-      }
-      .calendar-card {
-        height: 420px;
-        min-height: 420px;
-        max-height: 420px;
       }
       .bottom-section {
         grid-template-columns: 1fr;
@@ -3546,7 +3549,7 @@
           </div>
         </div>
       </div>
-      <div class="info-card memo-under-calendar">
+      <div class="info-card memo-under-tasks">
         <div class="memo-section">
           <div class="memo-header">
             <h2 style="margin-bottom: 0;"><span class="material-icons">note</span>メモ</h2>
@@ -4138,6 +4141,7 @@
     let dayEventsCache = {};
     let emailRefreshInterval = null;
     let summaryRefreshInterval = null;
+    let calendarRefreshInterval = null;
     let calendarRequestId = 0; // カレンダー取得の連番。古い応答を捨てるために使う
     let currentThreadId = null;
     let editingLinkId = null;
@@ -4303,6 +4307,7 @@
     const refreshIntervalDefaults = {
       emailRefreshInterval: 30000,
       chatRefreshInterval: 30000,
+      calendarRefreshInterval: 15 * 60 * 1000, // 15分
       taskRefreshINterval: 60000
     };
 
@@ -4316,6 +4321,7 @@
       return {
         emailRefreshInterval: normalize(source.emailRefreshInterval, refreshIntervalDefaults.emailRefreshInterval),
         chatRefreshInterval: normalize(source.chatRefreshInterval, refreshIntervalDefaults.chatRefreshInterval),
+        calendarRefreshInterval: normalize(source.calendarRefreshInterval, refreshIntervalDefaults.calendarRefreshInterval),
         taskRefreshINterval: normalize(source.taskRefreshINterval, refreshIntervalDefaults.taskRefreshINterval)
       };
     }
@@ -4335,7 +4341,10 @@
       if (taskRefreshInterval) clearInterval(taskRefreshInterval);
       taskRefreshInterval = setInterval(loadTodoList, normalized.taskRefreshINterval);
 
-      // カレンダーはページ読み込み時と手動更新のみ（定期更新なし）
+      if (calendarRefreshInterval) clearInterval(calendarRefreshInterval);
+      calendarRefreshInterval = setInterval(function() {
+        refreshCalendarView({ isBackground: true });
+      }, normalized.calendarRefreshInterval);
 
       if (summaryRefreshInterval) clearInterval(summaryRefreshInterval);
       summaryRefreshInterval = setInterval(updateSummaryDashboard, 60000);
@@ -6441,13 +6450,27 @@
       btn.classList.toggle('is-loading', isRefreshing);
     }
 
-    function refreshCalendarView() {
+    // options.isBackground: 定期更新など利用者が操作していない更新。
+    // 表示中の予定を消さず、スクロール位置も保つ
+    function refreshCalendarView(options) {
+      const isBackground = Boolean(options && options.isBackground);
       if (calendarView === 'month') {
         loadMonthEvents();
       } else if (calendarView === 'week') {
-        renderWeekView();
+        renderWeekView(isBackground);
       } else if (calendarView === 'day') {
-        renderDayView();
+        renderDayView(isBackground);
+      }
+    }
+
+    // 定期更新ではスクロール位置を保ち、それ以外は現在時刻付近へスクロールする
+    function replaceCalendarViewContent(container, html, isBackground) {
+      const previousScrollTop = container.scrollTop;
+      container.innerHTML = html;
+      if (isBackground) {
+        container.scrollTop = previousScrollTop;
+      } else {
+        scrollCurrentTimeIntoView(container);
       }
     }
 
@@ -6464,7 +6487,7 @@
       container.scrollTop = targetTop < 0 ? 0 : targetTop;
     }
 
-    function renderWeekView() {
+    function renderWeekView(isBackground) {
       const weekView = document.getElementById('calendarWeekView');
       const monthElement = document.getElementById('calendarMonth');
 
@@ -6487,7 +6510,7 @@
       }
 
       // 週の各日のイベントを取得
-      loadWeekEvents();
+      loadWeekEvents(isBackground);
     }
 
     function getWeekNumber(date) {
@@ -6495,11 +6518,13 @@
       return Math.ceil((date.getDate() + firstDay.getDay()) / 7);
     }
 
-    function loadWeekEvents() {
+    function loadWeekEvents(isBackground) {
       const weekView = document.getElementById('calendarWeekView');
       if (!weekView) return;
 
-      weekView.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+      if (!isBackground) {
+        weekView.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+      }
 
       const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
       const today = new Date();
@@ -6536,10 +6561,13 @@
 
         setCalendarRefreshing(false);
         if (failedRequests === dayData.length) {
-          weekView.innerHTML = '<div class="no-events">予定の取得に失敗しました</div>';
+          // 定期更新の失敗では、表示中の予定を残す
+          if (!isBackground) {
+            weekView.innerHTML = '<div class="no-events">予定の取得に失敗しました</div>';
+          }
           return;
         }
-        renderWeekViewGrid(dayData, allEvents);
+        renderWeekViewGrid(dayData, allEvents, isBackground);
       };
 
       dayData.forEach(function(day) {
@@ -6558,7 +6586,7 @@
       });
     }
 
-    function renderWeekViewGrid(dayData, allEvents) {
+    function renderWeekViewGrid(dayData, allEvents, isBackground) {
       const weekView = document.getElementById('calendarWeekView');
       if (!weekView) return;
 
@@ -6654,11 +6682,10 @@
       html += '</div>';
       html += '</div>';
 
-      weekView.innerHTML = html;
-      scrollCurrentTimeIntoView(weekView);
+      replaceCalendarViewContent(weekView, html, isBackground);
     }
 
-    function renderDayView() {
+    function renderDayView(isBackground) {
       const dayView = document.getElementById('calendarDayView');
       const monthElement = document.getElementById('calendarMonth');
 
@@ -6678,7 +6705,9 @@
 
       if (!dayView) return;
 
-      dayView.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+      if (!isBackground) {
+        dayView.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+      }
 
       const requestId = ++calendarRequestId;
       setCalendarRefreshing(true);
@@ -6687,18 +6716,21 @@
         .withSuccessHandler(function(data) {
           if (requestId !== calendarRequestId) return;
           setCalendarRefreshing(false);
-          renderDayViewGrid(data, dateStr, weekdays);
+          renderDayViewGrid(data, dateStr, weekdays, isBackground);
         })
         .withFailureHandler(function(error) {
           console.error('getCalendarEvents failed for ' + dateStr, error);
           if (requestId !== calendarRequestId) return;
           setCalendarRefreshing(false);
-          dayView.innerHTML = '<div class="no-events">予定の取得に失敗しました</div>';
+          // 定期更新の失敗では、表示中の予定を残す
+          if (!isBackground) {
+            dayView.innerHTML = '<div class="no-events">予定の取得に失敗しました</div>';
+          }
         })
         .getCalendarEvents(dateStr);
     }
 
-    function renderDayViewGrid(data, dateStr, weekdays) {
+    function renderDayViewGrid(data, dateStr, weekdays, isBackground) {
       const dayView = document.getElementById('calendarDayView');
       if (!dayView) return;
 
@@ -6786,8 +6818,7 @@
         html += '<div class="no-events-day">この日の予定はありません</div>';
       }
 
-      dayView.innerHTML = html;
-      scrollCurrentTimeIntoView(dayView);
+      replaceCalendarViewContent(dayView, html, isBackground);
     }
 
     // 初期化
@@ -7877,6 +7908,7 @@
       if (emailRefreshInterval) clearInterval(emailRefreshInterval);
       if (chatRefreshInterval) clearInterval(chatRefreshInterval);
       if (summaryRefreshInterval) clearInterval(summaryRefreshInterval);
+      if (calendarRefreshInterval) clearInterval(calendarRefreshInterval);
     });
   </script>
 </body>

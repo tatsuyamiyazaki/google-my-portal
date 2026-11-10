@@ -29,7 +29,7 @@ function getRefreshIntervals() {
   const defaults = {
     emailRefreshInterval: 30000,
     chatRefreshInterval: 30000,
-    calendarRefreshInterval: 60000,
+    calendarRefreshInterval: 15 * 60 * 1000, // 15分
     taskRefreshINterval: 60000
   };
 
