@@ -1884,19 +1884,146 @@ function getFixedLinks() {
       return { success: true, links: defaultLinks };
     }
     
-    return { success: true, links: JSON.parse(linksJson) };
+    return { success: true, links: sanitizeStoredFixedLinks(JSON.parse(linksJson)) };
   } catch (error) {
     return { success: false, error: error.toString() };
   }
 }
 
+/**
+ * 保存済みの固定リンクを現在の規則に合う形へ直して返す。
+ * 検証を入れる前に保存されたデータで、表示や次回の保存が止まらないようにするための読み出し側の補正。
+ * @param {*} storedLinks
+ * @returns {Array<{name: string, url: string, icon: string, color: string}>}
+ */
+function sanitizeStoredFixedLinks(storedLinks) {
+  if (!Array.isArray(storedLinks)) {
+    return [];
+  }
+  return storedLinks
+    .filter(function(link) { return link && typeof link === 'object'; })
+    .slice(0, FIXED_LINK_MAX_COUNT)
+    .map(function(link) {
+      const name = String(link.name || '').trim().slice(0, FIXED_LINK_MAX_NAME_LENGTH);
+      const icon = String(link.icon || '');
+      const color = String(link.color || '');
+      return {
+        name: name || FIXED_LINK_FALLBACK_NAME,
+        url: sanitizeStoredFixedLinkUrl(link.url),
+        icon: FIXED_LINK_ICON_PATTERN.test(icon) ? icon : FIXED_LINK_DEFAULT_ICON,
+        color: isAllowedFixedLinkColor(color) ? color : FIXED_LINK_DEFAULT_COLOR
+      };
+    });
+}
+
+/**
+ * 保存済みのURLを補正する。スキームのないURLには https:// を補い、それでも規則に合わなければ '#' にする。
+ * @param {*} storedUrl
+ * @returns {string}
+ */
+function sanitizeStoredFixedLinkUrl(storedUrl) {
+  const url = String(storedUrl || '').trim();
+  if (isAllowedFixedLinkUrl(url)) {
+    return url;
+  }
+  const hasScheme = /^[a-z][a-z0-9+.-]*:/i.test(url);
+  const withScheme = 'https://' + url;
+  return !hasScheme && url && isAllowedFixedLinkUrl(withScheme) ? withScheme : FIXED_LINK_PLACEHOLDER_URL;
+}
+
+/**
+ * @param {string} url
+ * @returns {boolean}
+ */
+function isAllowedFixedLinkUrl(url) {
+  const isAllowedFormat = url === FIXED_LINK_PLACEHOLDER_URL || FIXED_LINK_URL_PATTERN.test(url);
+  return isAllowedFormat && url.length <= FIXED_LINK_MAX_URL_LENGTH;
+}
+
+/**
+ * @param {string} color
+ * @returns {boolean}
+ */
+function isAllowedFixedLinkColor(color) {
+  return color.length <= FIXED_LINK_MAX_COLOR_LENGTH && FIXED_LINK_COLOR_PATTERN.test(color);
+}
+
+const FIXED_LINK_MAX_COUNT = 50;
+const FIXED_LINK_MAX_NAME_LENGTH = 100;
+const FIXED_LINK_MAX_URL_LENGTH = 2000;
+const FIXED_LINK_MAX_COLOR_LENGTH = 200;
+// UserProperties は1件あたり約9KBまで。日本語名の分を見込んで文字数で余裕を持たせる
+const FIXED_LINK_MAX_JSON_LENGTH = 6000;
+const FIXED_LINK_FALLBACK_NAME = '(名称なし)';
+const FIXED_LINK_DEFAULT_ICON = 'link';
+const FIXED_LINK_DEFAULT_COLOR = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+const FIXED_LINK_PLACEHOLDER_URL = '#';
+const FIXED_LINK_URL_PATTERN = /^https?:\/\/\S+$/i;
+const FIXED_LINK_ICON_PATTERN = /^[a-z0-9_]{1,50}$/;
+const FIXED_LINK_COLOR_PATTERN = /^[a-zA-Z0-9#%,.()\s-]+$/;
+
+/**
+ * 固定リンク1件を検証し、保存する項目だけを持つ新しいオブジェクトを返す。
+ * @param {*} link
+ * @param {number} index
+ * @returns {{name: string, url: string, icon: string, color: string}}
+ */
+function normalizeFixedLink(link, index) {
+  const label = (index + 1) + '件目の固定リンク: ';
+  if (!link || typeof link !== 'object') {
+    throw new Error(label + '形式が不正です');
+  }
+
+  const name = typeof link.name === 'string' ? link.name.trim() : '';
+  if (!name || name.length > FIXED_LINK_MAX_NAME_LENGTH) {
+    throw new Error(label + '名前は1〜' + FIXED_LINK_MAX_NAME_LENGTH + '文字で入力してください');
+  }
+
+  const url = typeof link.url === 'string' ? link.url.trim() : '';
+  if (!isAllowedFixedLinkUrl(url)) {
+    throw new Error(label + 'URLは http:// または https:// で始まる' + FIXED_LINK_MAX_URL_LENGTH + '文字以内で入力してください');
+  }
+
+  const icon = link.icon || FIXED_LINK_DEFAULT_ICON;
+  if (typeof icon !== 'string' || !FIXED_LINK_ICON_PATTERN.test(icon)) {
+    throw new Error(label + 'アイコンの指定が不正です');
+  }
+
+  const color = link.color || FIXED_LINK_DEFAULT_COLOR;
+  if (typeof color !== 'string' || !isAllowedFixedLinkColor(color)) {
+    throw new Error(label + 'カラーの指定が不正です');
+  }
+
+  return { name: name, url: url, icon: icon, color: color };
+}
+
+/**
+ * 固定リンクの配列を検証する。不正な要素があれば例外を投げる。
+ * @param {*} links
+ * @returns {Array<{name: string, url: string, icon: string, color: string}>}
+ */
+function normalizeFixedLinks(links) {
+  if (!Array.isArray(links)) {
+    throw new Error('固定リンクの形式が不正です');
+  }
+  if (links.length > FIXED_LINK_MAX_COUNT) {
+    throw new Error('固定リンクは' + FIXED_LINK_MAX_COUNT + '件までです');
+  }
+  return links.map(normalizeFixedLink);
+}
+
 function saveFixedLinks(links) {
   try {
+    const validLinks = normalizeFixedLinks(links);
+    const linksJson = JSON.stringify(validLinks);
+    if (linksJson.length > FIXED_LINK_MAX_JSON_LENGTH) {
+      throw new Error('固定リンクのデータが大きすぎます。件数を減らすか、名前やURLを短くしてください');
+    }
     const userProperties = PropertiesService.getUserProperties();
-    userProperties.setProperty('fixedLinks', JSON.stringify(links));
-    return { success: true };
+    userProperties.setProperty('fixedLinks', linksJson);
+    return { success: true, links: validLinks };
   } catch (error) {
-    return { success: false, error: error.toString() };
+    return { success: false, error: error.message || String(error) };
   }
 }
 

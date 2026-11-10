@@ -309,6 +309,15 @@
       background: rgba(176, 176, 176, 0.2);
     }
 
+    .fixed-link-action-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .fixed-link-action-btn:disabled:hover {
+      background: transparent;
+    }
+
     .fixed-link-action-btn.delete:hover {
       background: rgba(231, 76, 60, 0.2);
     }
@@ -3959,11 +3968,11 @@
       <div>
         <div class="form-group">
           <label for="fixedLinkNameInput">名前 *</label>
-          <input type="text" id="fixedLinkNameInput" class="form-input" placeholder="例: Gmail" />
+          <input type="text" id="fixedLinkNameInput" class="form-input" placeholder="例: Gmail" maxlength="100" />
         </div>
         <div class="form-group">
           <label for="fixedLinkUrlInput">URL *</label>
-          <input type="url" id="fixedLinkUrlInput" class="form-input" placeholder="https://mail.google.com" />
+          <input type="url" id="fixedLinkUrlInput" class="form-input" placeholder="https://mail.google.com" maxlength="2000" />
         </div>
         <div class="form-group">
           <label for="fixedLinkIconInput">アイコン</label>
@@ -3978,6 +3987,7 @@
             <option value="language">Webサイト</option>
             <option value="code">GASアプリ</option>
             <option value="chat">チャット</option>
+            <option value="psychology">AI</option>
             <option value="video_call">ビデオ</option>
             <option value="storage">ストレージ</option>
             <option value="task_alt">タスク</option>
@@ -3997,6 +4007,7 @@
             <option value="linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)">パステル</option>
             <option value="linear-gradient(135deg, #ff0844 0%, #ffb199 100%)">レッド</option>
             <option value="linear-gradient(135deg, #96fbc4 0%, #f9f586 100%)">ライム</option>
+            <option value="linear-gradient(135deg, #434343 0%, #000000 100%)">ブラック</option>
           </select>
         </div>
         <div class="form-actions">
@@ -5496,6 +5507,30 @@
 
     loadUserLinks();
 
+    // 固定リンクの表示値の検証（サーバー側 normalizeFixedLink と同じ規則）
+    const FIXED_LINK_DEFAULT_ICON = 'link';
+    const FIXED_LINK_DEFAULT_COLOR = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    const FIXED_LINK_PLACEHOLDER_URL = '#';
+    const FIXED_LINK_URL_PATTERN = /^https?:\/\/\S+$/i;
+    const FIXED_LINK_ICON_PATTERN = /^[a-z0-9_]{1,50}$/;
+    const FIXED_LINK_COLOR_PATTERN = /^[a-zA-Z0-9#%,.()\s-]+$/;
+
+    function isAllowedFixedLinkUrl(url) {
+      return url === FIXED_LINK_PLACEHOLDER_URL || FIXED_LINK_URL_PATTERN.test(url || '');
+    }
+
+    function safeFixedLinkUrl(url) {
+      return isAllowedFixedLinkUrl(url) ? url : FIXED_LINK_PLACEHOLDER_URL;
+    }
+
+    function safeFixedLinkIcon(icon) {
+      return FIXED_LINK_ICON_PATTERN.test(icon || '') ? icon : FIXED_LINK_DEFAULT_ICON;
+    }
+
+    function safeFixedLinkColor(color) {
+      return FIXED_LINK_COLOR_PATTERN.test(color || '') ? color : FIXED_LINK_DEFAULT_COLOR;
+    }
+
     // 固定リンク読み込み
     function loadFixedLinks() {
       google.script.run
@@ -5517,9 +5552,9 @@
 
           let html = '';
           links.forEach(function(link) {
-            html += '<a href="' + escapeHtml(link.url) + '" target="_blank" class="fixed-link-item">';
-            html += '<div class="fixed-link-icon" style="background: ' + (link.color || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)') + ';">';
-            html += '<span class="material-icons">' + (link.icon || 'link') + '</span>';
+            html += '<a href="' + escapeHtml(safeFixedLinkUrl(link.url)) + '" target="_blank" rel="noopener noreferrer" class="fixed-link-item">';
+            html += '<div class="fixed-link-icon" style="background: ' + safeFixedLinkColor(link.color) + ';">';
+            html += '<span class="material-icons">' + safeFixedLinkIcon(link.icon) + '</span>';
             html += '</div>';
             html += '<span class="fixed-link-name">' + escapeHtml(link.name) + '</span>';
             html += '</a>';
@@ -5541,6 +5576,7 @@
     // 設定画面関連
     let allFixedLinks = [];
     let editingFixedLinkIndex = null;
+    let isSavingFixedLinks = false;
 
     function openSettingsModal() {
       document.getElementById('settingsModal').style.display = 'flex';
@@ -5576,16 +5612,23 @@
       }
 
       let html = '';
+      const lastIndex = allFixedLinks.length - 1;
       allFixedLinks.forEach(function(link, index) {
         html += '<div class="fixed-link-setting-item">';
-        html += '<div class="fixed-link-setting-icon" style="background: ' + (link.color || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)') + ';">';
-        html += '<span class="material-icons">' + (link.icon || 'link') + '</span>';
+        html += '<div class="fixed-link-setting-icon" style="background: ' + safeFixedLinkColor(link.color) + ';">';
+        html += '<span class="material-icons">' + safeFixedLinkIcon(link.icon) + '</span>';
         html += '</div>';
         html += '<div class="fixed-link-setting-info">';
         html += '<div class="fixed-link-setting-name">' + escapeHtml(link.name) + '</div>';
         html += '<div class="fixed-link-setting-url">' + escapeHtml(link.url) + '</div>';
         html += '</div>';
         html += '<div class="fixed-link-setting-actions">';
+        html += '<button class="fixed-link-action-btn" onclick="moveFixedLink(' + index + ', -1)" title="上へ"' + (index === 0 ? ' disabled' : '') + '>';
+        html += '<span class="material-icons">arrow_upward</span>';
+        html += '</button>';
+        html += '<button class="fixed-link-action-btn" onclick="moveFixedLink(' + index + ', 1)" title="下へ"' + (index === lastIndex ? ' disabled' : '') + '>';
+        html += '<span class="material-icons">arrow_downward</span>';
+        html += '</button>';
         html += '<button class="fixed-link-action-btn" onclick="editFixedLink(' + index + ')" title="編集">';
         html += '<span class="material-icons">edit</span>';
         html += '</button>';
@@ -5600,23 +5643,45 @@
     }
 
     function addFixedLink() {
+      if (isSavingFixedLinks) return;
       editingFixedLinkIndex = null;
       document.getElementById('fixedLinkEditTitle').textContent = '固定リンクを追加';
       document.getElementById('fixedLinkNameInput').value = '';
       document.getElementById('fixedLinkUrlInput').value = '';
-      document.getElementById('fixedLinkIconInput').value = 'link';
-      document.getElementById('fixedLinkColorInput').value = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+      selectFixedLinkOption('fixedLinkIconInput', FIXED_LINK_DEFAULT_ICON, '');
+      selectFixedLinkOption('fixedLinkColorInput', FIXED_LINK_DEFAULT_COLOR, '');
       document.getElementById('fixedLinkEditModal').style.display = 'flex';
+    }
+
+    // 選択肢にない値（既定リンクのアイコンやカラー）は、編集で失われないよう一時的な選択肢として足す
+    function selectFixedLinkOption(selectId, value, currentLabel) {
+      const select = document.getElementById(selectId);
+      Array.from(select.querySelectorAll('option[data-current-value]')).forEach(function(option) {
+        option.remove();
+      });
+
+      const hasOption = Array.from(select.options).some(function(option) {
+        return option.value === value;
+      });
+      if (!hasOption) {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = currentLabel;
+        option.setAttribute('data-current-value', 'true');
+        select.insertBefore(option, select.firstChild);
+      }
+      select.value = value;
     }
 
     function editFixedLink(index) {
       editingFixedLinkIndex = index;
       const link = allFixedLinks[index];
+      const icon = safeFixedLinkIcon(link.icon);
       document.getElementById('fixedLinkEditTitle').textContent = '固定リンクを編集';
       document.getElementById('fixedLinkNameInput').value = link.name || '';
       document.getElementById('fixedLinkUrlInput').value = link.url || '';
-      document.getElementById('fixedLinkIconInput').value = link.icon || 'link';
-      document.getElementById('fixedLinkColorInput').value = link.color || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+      selectFixedLinkOption('fixedLinkIconInput', icon, '現在のアイコン（' + icon + '）');
+      selectFixedLinkOption('fixedLinkColorInput', safeFixedLinkColor(link.color), '現在のカラー');
       document.getElementById('fixedLinkEditModal').style.display = 'flex';
     }
 
@@ -5631,43 +5696,71 @@
         return;
       }
 
-      const linkData = { name, url, icon, color };
-
-      if (editingFixedLinkIndex !== null) {
-        allFixedLinks[editingFixedLinkIndex] = linkData;
-      } else {
-        allFixedLinks.push(linkData);
+      if (!isAllowedFixedLinkUrl(url)) {
+        alert('URLは http:// または https:// で始まる必要があります');
+        return;
       }
 
-      saveAllFixedLinks();
+      const linkData = { name, url, icon, color };
+      const nextLinks = editingFixedLinkIndex !== null
+        ? allFixedLinks.map(function(link, index) {
+            return index === editingFixedLinkIndex ? linkData : link;
+          })
+        : allFixedLinks.concat([linkData]);
+
+      saveAllFixedLinks(nextLinks);
       closeModal('fixedLinkEditModal');
     }
 
     function deleteFixedLink(index) {
       if (!confirm('この固定リンクを削除しますか？')) return;
-      allFixedLinks.splice(index, 1);
-      saveAllFixedLinks();
+      saveAllFixedLinks(allFixedLinks.filter(function(link, linkIndex) {
+        return linkIndex !== index;
+      }));
     }
 
-    function saveAllFixedLinks() {
+    function moveFixedLink(index, direction) {
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= allFixedLinks.length) return;
+
+      const reordered = allFixedLinks.slice();
+      reordered[index] = allFixedLinks[targetIndex];
+      reordered[targetIndex] = allFixedLinks[index];
+      saveAllFixedLinks(reordered);
+    }
+
+    // nextLinks を保存する。失敗したら保存前の一覧に戻す
+    function saveAllFixedLinks(nextLinks) {
+      // 保存中に別の変更を重ねると、先の変更が古い一覧で上書きされるため受け付けない
+      if (isSavingFixedLinks) return;
+      isSavingFixedLinks = true;
+
+      const previousLinks = allFixedLinks;
       const list = document.getElementById('fixedLinksSettingsList');
       list.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>保存中...</p></div>';
 
+      function handleSaveFailure(message) {
+        isSavingFixedLinks = false;
+        allFixedLinks = previousLinks;
+        alert(message ? '保存に失敗しました: ' + message : '保存に失敗しました');
+        renderFixedLinksSettings();
+      }
+
       google.script.run
         .withSuccessHandler(function(result) {
-          if (result.success) {
-            renderFixedLinksSettings();
-            loadFixedLinks();
-          } else {
-            alert('保存に失敗しました');
-            renderFixedLinksSettings();
+          if (!result || !result.success) {
+            handleSaveFailure(result && result.error);
+            return;
           }
-        })
-        .withFailureHandler(function(error) {
-          alert('保存に失敗しました');
+          isSavingFixedLinks = false;
+          allFixedLinks = result.links || nextLinks;
           renderFixedLinksSettings();
+          loadFixedLinks();
         })
-        .saveFixedLinks(allFixedLinks);
+        .withFailureHandler(function() {
+          handleSaveFailure('');
+        })
+        .saveFixedLinks(nextLinks);
     }
 
     // メモ関連
