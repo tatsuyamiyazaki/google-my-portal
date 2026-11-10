@@ -18,12 +18,25 @@
       font-family: 'Noto Sans JP', sans-serif;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       min-height: 100vh;
+      min-height: 100dvh;
       padding: 8px;
       overflow-y: auto;
+      /* 画面の高さいっぱいに広げ、残りをメイン領域に割り当てる */
+      display: flex;
+      flex-direction: column;
     }
 
     .container {
       width: 100%;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .container > header,
+    .container > .summary-dashboard {
+      flex-shrink: 0;
     }
 
     header {
@@ -309,6 +322,15 @@
       background: rgba(176, 176, 176, 0.2);
     }
 
+    .fixed-link-action-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .fixed-link-action-btn:disabled:hover {
+      background: transparent;
+    }
+
     .fixed-link-action-btn.delete:hover {
       background: rgba(231, 76, 60, 0.2);
     }
@@ -483,23 +505,26 @@
     }
 
     .main-content {
+      /* 1段目（タスク）と2段目（メモ）は画面の残り高さを 8:7 で分ける。カレンダーは2段分 */
+      --main-gap: 8px;
+      --main-row-min: 160px;
       display: grid;
       grid-template-columns: 253px 253px 1fr 380px;
-      grid-template-rows: auto;
-      gap: 8px;
-      margin-bottom: 8px;
+      /* 各段は最低高さを持ち、それ以下の画面ではページ全体のスクロールに切り替わる */
+      grid-template-rows: minmax(var(--main-row-min), 8fr) minmax(var(--main-row-min), 7fr);
+      gap: var(--main-gap);
+      flex: 1 1 0;
+      min-height: calc(var(--main-row-min) * 2 + var(--main-gap));
     }
 
+    /* カードの高さはグリッドの段に従い、中身はカード内でスクロールさせる */
     .main-content > .info-card {
-      min-height: 400px;
-      max-height: 400px;
+      min-height: 0;
     }
 
     .main-content > .info-card:nth-child(1),
     .main-content > .info-card:nth-child(2) {
       grid-row: 1 / 3;
-      min-height: unset;
-      max-height: unset;
     }
 
     .bottom-section {
@@ -509,11 +534,16 @@
       margin-bottom: 8px;
     }
 
-    .main-content > .info-card.memo-under-calendar {
-      grid-column: 3 / 5;
+    /* カレンダーは3列目の1〜2段目を通しで使う */
+    .main-content > .info-card.calendar-card {
+      grid-column: 3;
+      grid-row: 1 / 3;
+    }
+
+    /* メモはタスクリストの下（4列目の2段目） */
+    .main-content > .info-card.memo-under-tasks {
+      grid-column: 4;
       grid-row: 2;
-      min-height: 350px;
-      max-height: 350px;
     }
 
     .bottom-section .info-card {
@@ -547,12 +577,6 @@
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
-    }
-
-    .calendar-card {
-      height: auto;
-      min-height: 267px;
-      max-height: 267px;
     }
 
     .calendar-card-header {
@@ -3265,30 +3289,43 @@
       .main-content {
         grid-template-columns: 213px 213px 1fr 320px;
       }
-      .main-content > .info-card {
-        min-height: 420px;
-      }
-      .calendar-card {
-        height: 456px;
-        min-height: 456px;
-        max-height: 456px;
-      }
       .bottom-section {
         grid-template-columns: 1fr;
       }
     }
 
     @media (max-width: 1200px) {
+      /* 縦積みになる幅では画面高さへの追従をやめ、カードごとの固定高さに戻す */
       .main-content {
+        --main-row1-height: 400px;
+        --main-row2-height: 350px;
         grid-template-columns: 1fr 1fr;
+        grid-template-rows: none;
+        flex: none;
+        min-height: 0;
       }
       .main-content > .info-card {
         min-height: 360px;
+        max-height: var(--main-row1-height);
       }
-      .calendar-card {
-        height: 420px;
-        min-height: 420px;
-        max-height: 420px;
+      .main-content > .info-card:nth-child(1),
+      .main-content > .info-card:nth-child(2) {
+        min-height: unset;
+        max-height: unset;
+      }
+      .main-content > .info-card.memo-under-tasks {
+        min-height: var(--main-row2-height);
+        max-height: var(--main-row2-height);
+      }
+      /* 列数が減る幅では固定配置をやめ、通常の流し込みに戻す */
+      .main-content > .info-card.calendar-card,
+      .main-content > .info-card.memo-under-tasks {
+        grid-column: auto;
+        grid-row: auto;
+      }
+      .main-content > .info-card.calendar-card {
+        min-height: var(--main-row1-height);
+        max-height: var(--main-row1-height);
       }
       .bottom-section {
         grid-template-columns: 1fr;
@@ -3304,11 +3341,6 @@
       }
       .main-content > .info-card {
         min-height: 360px;
-      }
-      .calendar-card {
-        height: 420px;
-        min-height: 420px;
-        max-height: 420px;
       }
       .bottom-section {
         grid-template-columns: 1fr;
@@ -3537,7 +3569,7 @@
           </div>
         </div>
       </div>
-      <div class="info-card memo-under-calendar">
+      <div class="info-card memo-under-tasks">
         <div class="memo-section">
           <div class="memo-header">
             <h2 style="margin-bottom: 0;"><span class="material-icons">note</span>メモ</h2>
@@ -3959,11 +3991,11 @@
       <div>
         <div class="form-group">
           <label for="fixedLinkNameInput">名前 *</label>
-          <input type="text" id="fixedLinkNameInput" class="form-input" placeholder="例: Gmail" />
+          <input type="text" id="fixedLinkNameInput" class="form-input" placeholder="例: Gmail" maxlength="100" />
         </div>
         <div class="form-group">
           <label for="fixedLinkUrlInput">URL *</label>
-          <input type="url" id="fixedLinkUrlInput" class="form-input" placeholder="https://mail.google.com" />
+          <input type="url" id="fixedLinkUrlInput" class="form-input" placeholder="https://mail.google.com" maxlength="2000" />
         </div>
         <div class="form-group">
           <label for="fixedLinkIconInput">アイコン</label>
@@ -3978,6 +4010,7 @@
             <option value="language">Webサイト</option>
             <option value="code">GASアプリ</option>
             <option value="chat">チャット</option>
+            <option value="psychology">AI</option>
             <option value="video_call">ビデオ</option>
             <option value="storage">ストレージ</option>
             <option value="task_alt">タスク</option>
@@ -3997,6 +4030,7 @@
             <option value="linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)">パステル</option>
             <option value="linear-gradient(135deg, #ff0844 0%, #ffb199 100%)">レッド</option>
             <option value="linear-gradient(135deg, #96fbc4 0%, #f9f586 100%)">ライム</option>
+            <option value="linear-gradient(135deg, #434343 0%, #000000 100%)">ブラック</option>
           </select>
         </div>
         <div class="form-actions">
@@ -4127,6 +4161,7 @@
     let dayEventsCache = {};
     let emailRefreshInterval = null;
     let summaryRefreshInterval = null;
+    let calendarRefreshInterval = null;
     let calendarRequestId = 0; // カレンダー取得の連番。古い応答を捨てるために使う
     let currentThreadId = null;
     let editingLinkId = null;
@@ -4292,6 +4327,7 @@
     const refreshIntervalDefaults = {
       emailRefreshInterval: 30000,
       chatRefreshInterval: 30000,
+      calendarRefreshInterval: 15 * 60 * 1000, // 15分
       taskRefreshINterval: 60000
     };
 
@@ -4305,6 +4341,7 @@
       return {
         emailRefreshInterval: normalize(source.emailRefreshInterval, refreshIntervalDefaults.emailRefreshInterval),
         chatRefreshInterval: normalize(source.chatRefreshInterval, refreshIntervalDefaults.chatRefreshInterval),
+        calendarRefreshInterval: normalize(source.calendarRefreshInterval, refreshIntervalDefaults.calendarRefreshInterval),
         taskRefreshINterval: normalize(source.taskRefreshINterval, refreshIntervalDefaults.taskRefreshINterval)
       };
     }
@@ -4324,7 +4361,10 @@
       if (taskRefreshInterval) clearInterval(taskRefreshInterval);
       taskRefreshInterval = setInterval(loadTodoList, normalized.taskRefreshINterval);
 
-      // カレンダーはページ読み込み時と手動更新のみ（定期更新なし）
+      if (calendarRefreshInterval) clearInterval(calendarRefreshInterval);
+      calendarRefreshInterval = setInterval(function() {
+        refreshCalendarView({ isBackground: true });
+      }, normalized.calendarRefreshInterval);
 
       if (summaryRefreshInterval) clearInterval(summaryRefreshInterval);
       summaryRefreshInterval = setInterval(updateSummaryDashboard, 60000);
@@ -5496,6 +5536,30 @@
 
     loadUserLinks();
 
+    // 固定リンクの表示値の検証（サーバー側 normalizeFixedLink と同じ規則）
+    const FIXED_LINK_DEFAULT_ICON = 'link';
+    const FIXED_LINK_DEFAULT_COLOR = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    const FIXED_LINK_PLACEHOLDER_URL = '#';
+    const FIXED_LINK_URL_PATTERN = /^https?:\/\/\S+$/i;
+    const FIXED_LINK_ICON_PATTERN = /^[a-z0-9_]{1,50}$/;
+    const FIXED_LINK_COLOR_PATTERN = /^[a-zA-Z0-9#%,.()\s-]+$/;
+
+    function isAllowedFixedLinkUrl(url) {
+      return url === FIXED_LINK_PLACEHOLDER_URL || FIXED_LINK_URL_PATTERN.test(url || '');
+    }
+
+    function safeFixedLinkUrl(url) {
+      return isAllowedFixedLinkUrl(url) ? url : FIXED_LINK_PLACEHOLDER_URL;
+    }
+
+    function safeFixedLinkIcon(icon) {
+      return FIXED_LINK_ICON_PATTERN.test(icon || '') ? icon : FIXED_LINK_DEFAULT_ICON;
+    }
+
+    function safeFixedLinkColor(color) {
+      return FIXED_LINK_COLOR_PATTERN.test(color || '') ? color : FIXED_LINK_DEFAULT_COLOR;
+    }
+
     // 固定リンク読み込み
     function loadFixedLinks() {
       google.script.run
@@ -5517,9 +5581,9 @@
 
           let html = '';
           links.forEach(function(link) {
-            html += '<a href="' + escapeHtml(link.url) + '" target="_blank" class="fixed-link-item">';
-            html += '<div class="fixed-link-icon" style="background: ' + (link.color || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)') + ';">';
-            html += '<span class="material-icons">' + (link.icon || 'link') + '</span>';
+            html += '<a href="' + escapeHtml(safeFixedLinkUrl(link.url)) + '" target="_blank" rel="noopener noreferrer" class="fixed-link-item">';
+            html += '<div class="fixed-link-icon" style="background: ' + safeFixedLinkColor(link.color) + ';">';
+            html += '<span class="material-icons">' + safeFixedLinkIcon(link.icon) + '</span>';
             html += '</div>';
             html += '<span class="fixed-link-name">' + escapeHtml(link.name) + '</span>';
             html += '</a>';
@@ -5541,6 +5605,7 @@
     // 設定画面関連
     let allFixedLinks = [];
     let editingFixedLinkIndex = null;
+    let isSavingFixedLinks = false;
 
     function openSettingsModal() {
       document.getElementById('settingsModal').style.display = 'flex';
@@ -5576,16 +5641,23 @@
       }
 
       let html = '';
+      const lastIndex = allFixedLinks.length - 1;
       allFixedLinks.forEach(function(link, index) {
         html += '<div class="fixed-link-setting-item">';
-        html += '<div class="fixed-link-setting-icon" style="background: ' + (link.color || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)') + ';">';
-        html += '<span class="material-icons">' + (link.icon || 'link') + '</span>';
+        html += '<div class="fixed-link-setting-icon" style="background: ' + safeFixedLinkColor(link.color) + ';">';
+        html += '<span class="material-icons">' + safeFixedLinkIcon(link.icon) + '</span>';
         html += '</div>';
         html += '<div class="fixed-link-setting-info">';
         html += '<div class="fixed-link-setting-name">' + escapeHtml(link.name) + '</div>';
         html += '<div class="fixed-link-setting-url">' + escapeHtml(link.url) + '</div>';
         html += '</div>';
         html += '<div class="fixed-link-setting-actions">';
+        html += '<button class="fixed-link-action-btn" onclick="moveFixedLink(' + index + ', -1)" title="上へ"' + (index === 0 ? ' disabled' : '') + '>';
+        html += '<span class="material-icons">arrow_upward</span>';
+        html += '</button>';
+        html += '<button class="fixed-link-action-btn" onclick="moveFixedLink(' + index + ', 1)" title="下へ"' + (index === lastIndex ? ' disabled' : '') + '>';
+        html += '<span class="material-icons">arrow_downward</span>';
+        html += '</button>';
         html += '<button class="fixed-link-action-btn" onclick="editFixedLink(' + index + ')" title="編集">';
         html += '<span class="material-icons">edit</span>';
         html += '</button>';
@@ -5600,23 +5672,45 @@
     }
 
     function addFixedLink() {
+      if (isSavingFixedLinks) return;
       editingFixedLinkIndex = null;
       document.getElementById('fixedLinkEditTitle').textContent = '固定リンクを追加';
       document.getElementById('fixedLinkNameInput').value = '';
       document.getElementById('fixedLinkUrlInput').value = '';
-      document.getElementById('fixedLinkIconInput').value = 'link';
-      document.getElementById('fixedLinkColorInput').value = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+      selectFixedLinkOption('fixedLinkIconInput', FIXED_LINK_DEFAULT_ICON, '');
+      selectFixedLinkOption('fixedLinkColorInput', FIXED_LINK_DEFAULT_COLOR, '');
       document.getElementById('fixedLinkEditModal').style.display = 'flex';
+    }
+
+    // 選択肢にない値（既定リンクのアイコンやカラー）は、編集で失われないよう一時的な選択肢として足す
+    function selectFixedLinkOption(selectId, value, currentLabel) {
+      const select = document.getElementById(selectId);
+      Array.from(select.querySelectorAll('option[data-current-value]')).forEach(function(option) {
+        option.remove();
+      });
+
+      const hasOption = Array.from(select.options).some(function(option) {
+        return option.value === value;
+      });
+      if (!hasOption) {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = currentLabel;
+        option.setAttribute('data-current-value', 'true');
+        select.insertBefore(option, select.firstChild);
+      }
+      select.value = value;
     }
 
     function editFixedLink(index) {
       editingFixedLinkIndex = index;
       const link = allFixedLinks[index];
+      const icon = safeFixedLinkIcon(link.icon);
       document.getElementById('fixedLinkEditTitle').textContent = '固定リンクを編集';
       document.getElementById('fixedLinkNameInput').value = link.name || '';
       document.getElementById('fixedLinkUrlInput').value = link.url || '';
-      document.getElementById('fixedLinkIconInput').value = link.icon || 'link';
-      document.getElementById('fixedLinkColorInput').value = link.color || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+      selectFixedLinkOption('fixedLinkIconInput', icon, '現在のアイコン（' + icon + '）');
+      selectFixedLinkOption('fixedLinkColorInput', safeFixedLinkColor(link.color), '現在のカラー');
       document.getElementById('fixedLinkEditModal').style.display = 'flex';
     }
 
@@ -5631,43 +5725,71 @@
         return;
       }
 
-      const linkData = { name, url, icon, color };
-
-      if (editingFixedLinkIndex !== null) {
-        allFixedLinks[editingFixedLinkIndex] = linkData;
-      } else {
-        allFixedLinks.push(linkData);
+      if (!isAllowedFixedLinkUrl(url)) {
+        alert('URLは http:// または https:// で始まる必要があります');
+        return;
       }
 
-      saveAllFixedLinks();
+      const linkData = { name, url, icon, color };
+      const nextLinks = editingFixedLinkIndex !== null
+        ? allFixedLinks.map(function(link, index) {
+            return index === editingFixedLinkIndex ? linkData : link;
+          })
+        : allFixedLinks.concat([linkData]);
+
+      saveAllFixedLinks(nextLinks);
       closeModal('fixedLinkEditModal');
     }
 
     function deleteFixedLink(index) {
       if (!confirm('この固定リンクを削除しますか？')) return;
-      allFixedLinks.splice(index, 1);
-      saveAllFixedLinks();
+      saveAllFixedLinks(allFixedLinks.filter(function(link, linkIndex) {
+        return linkIndex !== index;
+      }));
     }
 
-    function saveAllFixedLinks() {
+    function moveFixedLink(index, direction) {
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= allFixedLinks.length) return;
+
+      const reordered = allFixedLinks.slice();
+      reordered[index] = allFixedLinks[targetIndex];
+      reordered[targetIndex] = allFixedLinks[index];
+      saveAllFixedLinks(reordered);
+    }
+
+    // nextLinks を保存する。失敗したら保存前の一覧に戻す
+    function saveAllFixedLinks(nextLinks) {
+      // 保存中に別の変更を重ねると、先の変更が古い一覧で上書きされるため受け付けない
+      if (isSavingFixedLinks) return;
+      isSavingFixedLinks = true;
+
+      const previousLinks = allFixedLinks;
       const list = document.getElementById('fixedLinksSettingsList');
       list.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>保存中...</p></div>';
 
+      function handleSaveFailure(message) {
+        isSavingFixedLinks = false;
+        allFixedLinks = previousLinks;
+        alert(message ? '保存に失敗しました: ' + message : '保存に失敗しました');
+        renderFixedLinksSettings();
+      }
+
       google.script.run
         .withSuccessHandler(function(result) {
-          if (result.success) {
-            renderFixedLinksSettings();
-            loadFixedLinks();
-          } else {
-            alert('保存に失敗しました');
-            renderFixedLinksSettings();
+          if (!result || !result.success) {
+            handleSaveFailure(result && result.error);
+            return;
           }
-        })
-        .withFailureHandler(function(error) {
-          alert('保存に失敗しました');
+          isSavingFixedLinks = false;
+          allFixedLinks = result.links || nextLinks;
           renderFixedLinksSettings();
+          loadFixedLinks();
         })
-        .saveFixedLinks(allFixedLinks);
+        .withFailureHandler(function() {
+          handleSaveFailure('');
+        })
+        .saveFixedLinks(nextLinks);
     }
 
     // メモ関連
@@ -6348,13 +6470,27 @@
       btn.classList.toggle('is-loading', isRefreshing);
     }
 
-    function refreshCalendarView() {
+    // options.isBackground: 定期更新など利用者が操作していない更新。
+    // 表示中の予定を消さず、スクロール位置も保つ
+    function refreshCalendarView(options) {
+      const isBackground = Boolean(options && options.isBackground);
       if (calendarView === 'month') {
         loadMonthEvents();
       } else if (calendarView === 'week') {
-        renderWeekView();
+        renderWeekView(isBackground);
       } else if (calendarView === 'day') {
-        renderDayView();
+        renderDayView(isBackground);
+      }
+    }
+
+    // 定期更新ではスクロール位置を保ち、それ以外は現在時刻付近へスクロールする
+    function replaceCalendarViewContent(container, html, isBackground) {
+      const previousScrollTop = container.scrollTop;
+      container.innerHTML = html;
+      if (isBackground) {
+        container.scrollTop = previousScrollTop;
+      } else {
+        scrollCurrentTimeIntoView(container);
       }
     }
 
@@ -6371,7 +6507,7 @@
       container.scrollTop = targetTop < 0 ? 0 : targetTop;
     }
 
-    function renderWeekView() {
+    function renderWeekView(isBackground) {
       const weekView = document.getElementById('calendarWeekView');
       const monthElement = document.getElementById('calendarMonth');
 
@@ -6394,7 +6530,7 @@
       }
 
       // 週の各日のイベントを取得
-      loadWeekEvents();
+      loadWeekEvents(isBackground);
     }
 
     function getWeekNumber(date) {
@@ -6402,11 +6538,13 @@
       return Math.ceil((date.getDate() + firstDay.getDay()) / 7);
     }
 
-    function loadWeekEvents() {
+    function loadWeekEvents(isBackground) {
       const weekView = document.getElementById('calendarWeekView');
       if (!weekView) return;
 
-      weekView.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+      if (!isBackground) {
+        weekView.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+      }
 
       const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
       const today = new Date();
@@ -6443,10 +6581,13 @@
 
         setCalendarRefreshing(false);
         if (failedRequests === dayData.length) {
-          weekView.innerHTML = '<div class="no-events">予定の取得に失敗しました</div>';
+          // 定期更新の失敗では、表示中の予定を残す
+          if (!isBackground) {
+            weekView.innerHTML = '<div class="no-events">予定の取得に失敗しました</div>';
+          }
           return;
         }
-        renderWeekViewGrid(dayData, allEvents);
+        renderWeekViewGrid(dayData, allEvents, isBackground);
       };
 
       dayData.forEach(function(day) {
@@ -6465,7 +6606,7 @@
       });
     }
 
-    function renderWeekViewGrid(dayData, allEvents) {
+    function renderWeekViewGrid(dayData, allEvents, isBackground) {
       const weekView = document.getElementById('calendarWeekView');
       if (!weekView) return;
 
@@ -6561,11 +6702,10 @@
       html += '</div>';
       html += '</div>';
 
-      weekView.innerHTML = html;
-      scrollCurrentTimeIntoView(weekView);
+      replaceCalendarViewContent(weekView, html, isBackground);
     }
 
-    function renderDayView() {
+    function renderDayView(isBackground) {
       const dayView = document.getElementById('calendarDayView');
       const monthElement = document.getElementById('calendarMonth');
 
@@ -6585,7 +6725,9 @@
 
       if (!dayView) return;
 
-      dayView.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+      if (!isBackground) {
+        dayView.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+      }
 
       const requestId = ++calendarRequestId;
       setCalendarRefreshing(true);
@@ -6594,18 +6736,21 @@
         .withSuccessHandler(function(data) {
           if (requestId !== calendarRequestId) return;
           setCalendarRefreshing(false);
-          renderDayViewGrid(data, dateStr, weekdays);
+          renderDayViewGrid(data, dateStr, weekdays, isBackground);
         })
         .withFailureHandler(function(error) {
           console.error('getCalendarEvents failed for ' + dateStr, error);
           if (requestId !== calendarRequestId) return;
           setCalendarRefreshing(false);
-          dayView.innerHTML = '<div class="no-events">予定の取得に失敗しました</div>';
+          // 定期更新の失敗では、表示中の予定を残す
+          if (!isBackground) {
+            dayView.innerHTML = '<div class="no-events">予定の取得に失敗しました</div>';
+          }
         })
         .getCalendarEvents(dateStr);
     }
 
-    function renderDayViewGrid(data, dateStr, weekdays) {
+    function renderDayViewGrid(data, dateStr, weekdays, isBackground) {
       const dayView = document.getElementById('calendarDayView');
       if (!dayView) return;
 
@@ -6693,8 +6838,7 @@
         html += '<div class="no-events-day">この日の予定はありません</div>';
       }
 
-      dayView.innerHTML = html;
-      scrollCurrentTimeIntoView(dayView);
+      replaceCalendarViewContent(dayView, html, isBackground);
     }
 
     // 初期化
@@ -7784,6 +7928,7 @@
       if (emailRefreshInterval) clearInterval(emailRefreshInterval);
       if (chatRefreshInterval) clearInterval(chatRefreshInterval);
       if (summaryRefreshInterval) clearInterval(summaryRefreshInterval);
+      if (calendarRefreshInterval) clearInterval(calendarRefreshInterval);
     });
   </script>
 </body>
